@@ -6,11 +6,13 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: [
-          "Bricolage Grotesque Variable",
-          "Inter Variable",
-          "Inter",
+          "Comfortaa",
           ...defaultTheme.fontFamily.sans,
         ],
+      },
+      colors: {
+        background: '#fff9ef',
+        primary: '#354ead',
       },
     },
   },

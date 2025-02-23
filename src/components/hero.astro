@@ -1,6 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import heroImage from "../assets/hero-source.svg";
+
 import Link from "@components/ui/link.astro";
 import { Icon } from "astro-icon/components";
 ---
@@ -9,7 +9,7 @@ import { Icon } from "astro-icon/components";
   class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24">
   <div class="py-6 md:order-1 hidden md:block">
     <Image
-      src={heroImage}
+      src="/hero.png"
       alt="A classroom setting with students"
       width={500}
       height={500}
@@ -26,8 +26,8 @@ import { Icon } from "astro-icon/components";
       Primary 1-6 students.
     </p>
     <div class="mt-6 flex flex-col sm:flex-row gap-3">
-      <a href="#" class="btn">Book a Free Trial</a>
-      <a href="#" class="btn-secondary">Learn More</a>
+      <Link href="#" class="btn bg-primary rounded-full">Book a Free Trial</Link
+      >
     </div>
   </div>
 </main>
