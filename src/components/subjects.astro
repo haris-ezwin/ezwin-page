@@ -1,0 +1,88 @@
+---
+import { Icon } from "astro-icon/components";
+
+const subjects = [
+  {
+    name: "Mathematics",
+    status: "Available",
+    description:
+      "Comprehensive math program covering all PSLE topics with proven problem-solving techniques",
+    isAvailable: true,
+    icon: "mdi:math-compass",
+  },
+  {
+    name: "Science",
+    status: "Coming Soon",
+    description:
+      "Structured science curriculum focusing on conceptual understanding and practical applications",
+    isAvailable: false,
+    icon: "mdi:microscope",
+  },
+  {
+    name: "English",
+    status: "Coming Soon",
+    description:
+      "Holistic English program covering composition, comprehension, and oral communication",
+    isAvailable: false,
+    icon: "mdi:book-open-page-variant",
+  },
+  {
+    name: "Chinese",
+    status: "Coming Soon",
+    description:
+      "Interactive Chinese language learning with emphasis on reading and writing skills",
+    isAvailable: false,
+    icon: "mdi:translate",
+  },
+];
+---
+
+<div class="py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-4xl font-bold tracking-tight sm:text-5xl">
+        Our Subjects
+      </h2>
+      <p class="mt-6 text-lg leading-8 text-gray-600">
+        We provide online classes for all subjects.
+      </p>
+    </div>
+    <div
+      class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-4">
+      {
+        subjects.map((subject) => (
+          <div
+            class={`flex flex-col ring-1 rounded-3xl p-8 ${subject.isAvailable ? "ring-primary" : "ring-gray-200"}`}>
+            <div class="flex items-center gap-3">
+              <div
+                class={`p-2 rounded-full ${subject.isAvailable ? "bg-primary text-white" : "bg-gray-100 text-gray-600"}`}>
+                <Icon name={subject.icon} class="w-6 h-6" />
+              </div>
+              <h3 class="text-xl font-semibold leading-7 text-gray-900">
+                {subject.name}
+              </h3>
+            </div>
+            <p
+              class={`mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                subject.isAvailable
+                  ? "bg-green-50 text-green-700"
+                  : "bg-gray-100 text-gray-600"
+              }`}>
+              {subject.status}
+            </p>
+            <p class="mt-6 text-base leading-7 text-gray-600">
+              {subject.description}
+            </p>
+            {subject.isAvailable && (
+              <a
+                href="#"
+                class="mt-8 inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                Learn More
+              </a>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
