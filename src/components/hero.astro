@@ -7,7 +7,7 @@ import { Icon } from "astro-icon/components";
 
 <main
   class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24">
-  <div class="py-6 md:order-1 hidden md:block">
+  <div class="py-6 md:order-1">
     <Image
       src="/hero.png"
       alt="A classroom setting with students"
@@ -16,14 +16,17 @@ import { Icon } from "astro-icon/components";
     />
   </div>
   <div>
+    <span
+      class="bg-slate-100 text-slate-600 text-sm px-3 py-1 rounded-full inline-block mb-2"
+      >Self Proclaimed*</span
+    >
     <h1
       class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
-      Excellence in Primary School Education
+      #1 Online Tuition in Singapore*
     </h1>
     <p class="text-lg mt-4 text-slate-600 max-w-xl">
-      Empowering students for PSLE success through personalized learning and
-      proven teaching methods. Join Singapore's trusted tuition centre for
-      Primary 1-6 students.
+      We help students improve their grades with our online tuition classes, so
+      you can focus on parenting, anytime, anywhere.
     </p>
     <div class="mt-6 flex flex-col sm:flex-row gap-3">
       <Link href="#" class="btn bg-primary rounded-full">Book a Free Trial</Link
