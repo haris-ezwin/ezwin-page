@@ -6,10 +6,6 @@ import Link from "@components/ui/link.astro";
 
 <main class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-2 md:pb-2">
   <div>
-    <span
-      class="bg-slate-100 text-slate-600 text-sm px-3 py-1 rounded-full inline-block mb-2"
-      >Self Proclaimed</span
-    >
     <h1
       class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
       #1 Online Tuition in Singapore*
@@ -18,10 +14,15 @@ import Link from "@components/ui/link.astro";
       We help students improve their grades with our online tuition classes, so
       you can focus on parenting, anytime, anywhere.
     </p>
-    <div class="hidden lg:block mt-6">
+    <div class="hidden lg:block mt-6 space-x-4">
       <Link
         href="https://forms.clickup.com/9018916230/f/8ct3fc6-118/V58K37GFL4XWF5QHEJ"
         class="btn bg-primary rounded-full">Book a Free Trial</Link
+      >
+      <Link
+        href="#"
+        class="btn bg-secondary text-primary hover:bg-secondary/80 border-2 border-primary rounded-full"
+        >How Are We Different</Link
       >
     </div>
   </div>

@@ -1,0 +1,52 @@
+---
+const testimonials = [
+  {
+    id: 1,
+    name: "Bryan Saw",
+    role: "Student",
+    content:
+      "Love how HARIS started today, the explanation/recap before the class by drawing so i made myself so clearer after that. And today lesson was not rushing so is good for undestanding.",
+  },
+  {
+    id: 2,
+    name: "Mdm Kamilah",
+    role: "MOE Teacher",
+    content:
+      "Thank you so much Mr Haris! Such a pity you wont get to teach them the rest of the sessions. Anyway good job You were very good. Very engaging and entertaining. I am very sure the pupils enjoyed todays session.",
+  },
+  {
+    id: 3,
+    name: "Huda",
+    role: "Parent",
+    content:
+      "Was with a friend today and she was telling me that you did a good job. Her two daugters were in your class.",
+  },
+];
+---
+
+<div class="py-16 sm:py-20">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-4xl font-bold tracking-tight sm:text-5xl">
+        What Parents & Students Say About Us
+      </h2>
+    </div>
+
+    <div
+      class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      {
+        testimonials.map((testimonial) => (
+          <div class="flex flex-col justify-between bg-white p-8 rounded-3xl shadow-md">
+            <blockquote class="text-lg text-gray-700">
+              "{testimonial.content}"
+            </blockquote>
+            <div class="mt-8">
+              <p class="font-semibold text-gray-900">{testimonial.name}</p>
+              <p class="text-gray-600">{testimonial.role}</p>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
