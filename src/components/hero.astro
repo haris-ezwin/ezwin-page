@@ -2,19 +2,9 @@
 import { Image } from "astro:assets";
 
 import Link from "@components/ui/link.astro";
-import { Icon } from "astro-icon/components";
 ---
 
-<main
-  class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-12 md:pb-24">
-  <div class="py-6 md:order-1">
-    <Image
-      src="/hero.png"
-      alt="A classroom setting with students"
-      width={500}
-      height={500}
-    />
-  </div>
+<main class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-2 md:pb-2">
   <div>
     <span
       class="bg-slate-100 text-slate-600 text-sm px-3 py-1 rounded-full inline-block mb-2"
@@ -28,9 +18,17 @@ import { Icon } from "astro-icon/components";
       We help students improve their grades with our online tuition classes, so
       you can focus on parenting, anytime, anywhere.
     </p>
-    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+    <div class="hidden lg:block mt-6">
       <Link href="#" class="btn bg-primary rounded-full">Book a Free Trial</Link
       >
     </div>
+  </div>
+  <div class="py-6 md:order-1">
+    <Image
+      src="/hero.png"
+      alt="A classroom setting with students"
+      width={500}
+      height={500}
+    />
   </div>
 </main>

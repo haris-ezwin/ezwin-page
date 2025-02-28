@@ -1,0 +1,83 @@
+---
+// Get all school logos
+// Get number of files in school-logos directory
+const schoolLogos = await Astro.glob("/public/school-logos/*.png");
+const numLogos = schoolLogos.length;
+
+// Create array from 1 to number of logos
+const logoNumbers = Array.from({ length: numLogos }, (_, i) => String(i + 1));
+---
+
+<div class="py-16 sm:py-20 bg-background">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <p class="mt-4 text-lg leading-8 text-gray-600">
+        Our Tutors & Teachers Has Taught in Top Schools
+      </p>
+    </div>
+
+    <div class="relative mt-12 overflow-hidden">
+      <!-- Mobile view: Grid layout -->
+      <div class="grid grid-cols-1 gap-8 md:hidden">
+        {
+          logoNumbers.map((num) => (
+            <div class="w-full h-24">
+              <img
+                src={`/school-logos/${num}.png`}
+                alt={`School Logo ${num}`}
+                class="object-contain w-full h-full grayscale hover:grayscale-0 transition-all duration-200"
+              />
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Desktop view: Scrolling animation -->
+      <div class="hidden md:flex space-x-16 animate-scroll">
+        {
+          logoNumbers.map((num) => (
+            <div class="flex-none w-48 h-24">
+              <img
+                src={`/school-logos/${num}.png`}
+                alt={`School Logo ${num}`}
+                class="object-contain w-full h-full grayscale hover:grayscale-0 transition-all duration-200"
+              />
+            </div>
+          ))
+        }
+        {/* Duplicate set for seamless loop */}
+        {
+          logoNumbers.map((num) => (
+            <div class="flex-none w-48 h-24">
+              <img
+                src={`/school-logos/${num}.png`}
+                alt={`School Logo ${num}`}
+                class="object-contain w-full h-full grayscale hover:grayscale-0 transition-all duration-200"
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-250px * 5));
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
+  }
+
+  /* Pause animation on hover */
+  .animate-scroll:hover {
+    animation-play-state: paused;
+  }
+</style>
