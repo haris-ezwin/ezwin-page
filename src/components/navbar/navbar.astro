@@ -9,34 +9,51 @@ const menuitems = [
     title: "Programs",
     path: "#",
     children: [
-      { title: "Primary 1-2", path: "/" },
-      { title: "Primary 3-4", path: "#" },
-      { title: "Primary 5-6", path: "#" },
-      { title: "PSLE Preparation", path: "#" },
+      { title: "Primary 4 Maths", path: "#" },
+      { title: "Primary 5 Maths", path: "#" },
     ],
   },
   {
-    title: "Subjects",
-    path: "#",
-    children: [
-      { title: "English", path: "/" },
-      { title: "Mathematics", path: "#" },
-      { title: "Science", path: "#" },
-      { title: "Mother Tongue", path: "#" },
-    ],
+    title: "Free Lessons",
+    path: "/resources",
   },
   {
-    title: "About Us",
+    title: "About",
     path: "/about",
   },
-  {
-    title: "Success Stories",
-    path: "/testimonials",
-  },
 ];
+
+const currentMonth = new Date().getMonth() + 1; // Get current month (1-12)
+let monthsOffer = 0;
+
+if (currentMonth === 3) {
+  monthsOffer = 3;
+} else if (currentMonth === 4) {
+  monthsOffer = 2;
+} else if (currentMonth === 5) {
+  monthsOffer = 1;
+}
 ---
 
 <div class="sticky top-0 z-40 bg-background">
+  <!-- Announcement Bar -->
+  {
+    monthsOffer > 0 && (
+      <a
+        href="https://ez1.sg/free-trial"
+        class="block bg-primary text-white py-2 hover:bg-primary/90 transition-colors">
+        <Container>
+          <div class="text-center text-sm md:text-base">
+            <span class="font-medium">Special Offer:</span> {monthsOffer}{" "}
+            {monthsOffer === 1 ? "Month" : "Months"} Free Trial! Only
+            <span class="line-through mx-1">5</span>
+            <span class="font-bold">3</span>
+            slots remaining
+          </div>
+        </Container>
+      </a>
+    )
+  }
   <Container>
     <header class="flex flex-col lg:flex-row justify-between items-center py-5">
       <Astronav>
@@ -84,7 +101,7 @@ const menuitems = [
       <div>
         <div class="hidden lg:flex items-center gap-4">
           <Link
-            href="https://forms.clickup.com/9018916230/f/8ct3fc6-118/V58K37GFL4XWF5QHEJ"
+            href="https://ez1.sg/free-trial"
             size="md"
             style="primary"
             class="rounded-full bg-primary">Book Free Trial</Link
@@ -98,7 +115,7 @@ const menuitems = [
 <!-- Floating Action Button for Mobile -->
 <div class="fixed bottom-6 right-6 lg:hidden z-50">
   <Link
-    href="https://forms.clickup.com/9018916230/f/8ct3fc6-118/V58K37GFL4XWF5QHEJ"
+    href="https://ez1.sg/free-trial"
     size="lg"
     style="primary"
     class="rounded-full bg-primary shadow-lg flex items-center justify-center">
