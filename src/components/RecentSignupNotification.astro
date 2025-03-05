@@ -1,0 +1,39 @@
+<div
+  id="signup-notification"
+  class="fixed bottom-6 right-6 z-50 translate-y-[200%] transition-transform duration-500">
+  <div
+    class="bg-white rounded-lg shadow-lg p-4 flex items-center gap-3 border border-gray-100">
+    <div class="bg-primary/10 p-2 rounded-full">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-5 h-5 text-primary"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"
+        ></path>
+      </svg>
+    </div>
+    <div>
+      <p class="text-sm font-medium text-gray-900">
+        1 parent & student have recently signed up for a free trial
+      </p>
+      <p class="text-xs text-gray-500">4th March 2024, 12:34am</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  setTimeout(() => {
+    const notification = document.getElementById("signup-notification");
+    if (notification) {
+      notification.style.transform = "translateY(0)";
+
+      // Hide after 5 seconds
+      setTimeout(() => {
+        notification.style.transform = "translateY(200%)";
+      }, 5000);
+    }
+  }, 5000);
+</script>
