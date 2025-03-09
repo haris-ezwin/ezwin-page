@@ -1,66 +1,52 @@
 ---
 import Container from "@components/container.astro";
 import Layout from "@layouts/Layout.astro";
+import coursesData from "@utils/courses.js";
 
-const terms = [
-  {
-    name: "Term 1",
-    videos: [
-      {
-        id: "video1",
-        title: "Adding & Subtracting Fractions",
-        youtubeId: "SPl_mMrKieQ", // Replace with actual YouTube video ID
-      },
-      {
-        id: "video2",
-        title: "Improper Fractions & Mixed Numbers",
-        youtubeId: "BLyul_CQiWI", // Replace with actual YouTube video ID
-      },
-      {
-        id: "video3",
-        title: "Multiplying Between 2 Numbers",
-        youtubeId: "i4OLs-wyPJU", // Replace with actual YouTube video ID
-      },
-    ],
-  },
-  {
-    name: "Term 2",
-    videos: [
-      {
-        id: "video3",
-        title: "Decimals",
-        youtubeId: "ghi789", // Replace with actual YouTube video ID
-      },
-    ],
-  },
-  {
-    name: "Term 3",
-    videos: [
-      {
-        id: "video4",
-        title: "Angles",
-        youtubeId: "jkl101", // Replace with actual YouTube video ID
-      },
-    ],
-  },
-  {
-    name: "Term 4",
-    videos: [
-      {
-        id: "video5",
-        title: "Area and Perimeter",
-        youtubeId: "mno112", // Replace with actual YouTube video ID
-      },
-    ],
-  },
-];
+// Filter courses for Primary 4 only
+const p4Courses = coursesData.filter((course) => course.level === "Primary 4");
+
+// Group courses by term
+const termMap = p4Courses.reduce((acc, course) => {
+  if (!acc[course.term]) {
+    acc[course.term] = [];
+  }
+
+  // Extract YouTube ID from URL
+  const youtubeId = course.youtube_url.split("/").pop();
+  if (youtubeId) {
+    acc[course.term].push({
+      id: youtubeId,
+      title: course.name,
+      youtubeId: youtubeId,
+    });
+  }
+
+  return acc;
+}, {});
+
+// Ensure all terms are represented (Term 1-4)
+const allTerms = ["Term 1", "Term 2", "Term 3", "Term 4"];
+allTerms.forEach((term) => {
+  if (!termMap[term]) {
+    termMap[term] = [];
+  }
+});
+
+// Convert to array format for rendering
+const terms = allTerms.map((termName) => ({
+  name: termName,
+  videos: termMap[termName],
+  isEmpty: termMap[termName].length === 0,
+}));
 
 // Flatten all videos for selection purposes
 const allVideos = terms.flatMap((term) => term.videos);
 
 // Get the selected video ID from URL params, default to first video
 const selectedVideoId =
-  Astro.url.searchParams.get("video") || allVideos[0].youtubeId;
+  Astro.url.searchParams.get("video") ||
+  (allVideos.length > 0 ? allVideos[0].youtubeId : "");
 
 // Get the current term from URL params or default to first term
 const currentTermParam = Astro.url.searchParams.get("term");
@@ -115,20 +101,26 @@ const expandedTerms = terms.reduce((acc, term, index) => {
                       <div
                         id={`term-content-${termIndex}`}
                         class={`space-y-2 transition-all duration-300 overflow-hidden ${expandedTerms[termIndex] ? "max-h-96" : "max-h-0"}`}>
-                        {term.videos.map((video) => (
-                          <a
-                            href="#"
-                            data-video-id={video.youtubeId}
-                            class={`video-link block p-3 rounded-lg transition-colors ${
-                              selectedVideoId === video.youtubeId
-                                ? "bg-primary/10"
-                                : "hover:bg-gray-50"
-                            }`}>
-                            <h4 class="font-medium text-gray-900">
-                              {video.title}
-                            </h4>
-                          </a>
-                        ))}
+                        {term.isEmpty ? (
+                          <div class="p-3 text-gray-500 italic">
+                            Coming soon...
+                          </div>
+                        ) : (
+                          term.videos.map((video) => (
+                            <a
+                              href="#"
+                              data-video-id={video.youtubeId}
+                              class={`video-link block p-3 rounded-lg transition-colors ${
+                                selectedVideoId === video.youtubeId
+                                  ? "bg-primary/10"
+                                  : "hover:bg-gray-50"
+                              }`}>
+                              <h4 class="font-medium text-gray-900">
+                                {video.title}
+                              </h4>
+                            </a>
+                          ))
+                        )}
                       </div>
                     </div>
                   ))
@@ -219,13 +211,15 @@ const expandedTerms = terms.reduce((acc, term, index) => {
           currentVideoId = videoId;
 
           // Update video player
-          const videoPlayer = document.getElementById("video-player");
+          const videoPlayer = document.getElementById(
+            "video-player",
+          ) as HTMLIFrameElement;
           if (videoPlayer) {
             videoPlayer.src = `https://www.youtube.com/embed/${videoId}`;
           }
 
           // Update URL without page reload
-          const url = new URL(window.location);
+          const url = new URL(window.location.href);
           url.searchParams.set("video", videoId);
           window.history.pushState({}, "", url);
 
