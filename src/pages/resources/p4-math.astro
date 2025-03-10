@@ -100,7 +100,9 @@ const expandedTerms = terms.reduce((acc, term, index) => {
                       </button>
                       <div
                         id={`term-content-${termIndex}`}
-                        class={`space-y-2 transition-all duration-300 overflow-hidden ${expandedTerms[termIndex] ? "max-h-96" : "max-h-0"}`}>
+                        class={`space-y-2 transition-all duration-300 overflow-hidden ${
+                          expandedTerms[termIndex] ? "max-h-[500px]" : "max-h-0"
+                        }`}>
                         {term.isEmpty ? (
                           <div class="p-3 text-gray-500 italic">
                             Coming soon...
@@ -179,11 +181,11 @@ const expandedTerms = terms.reduce((acc, term, index) => {
         // Toggle the content visibility
         if (contentElement) {
           if (isExpanded) {
-            contentElement.classList.remove("max-h-96");
+            contentElement.classList.remove("max-h-[500px]");
             contentElement.classList.add("max-h-0");
           } else {
             contentElement.classList.remove("max-h-0");
-            contentElement.classList.add("max-h-96");
+            contentElement.classList.add("max-h-[500px]");
           }
         }
 
