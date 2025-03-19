@@ -35,6 +35,9 @@ importers:
       '@iconify-json/uil':
         specifier: ^1.1.8
         version: 1.2.3
+      '@prismicio/client':
+        specifier: ^7.16.1
+        version: 7.16.1
       '@tailwindcss/typography':
         specifier: ^0.5.13
         version: 0.5.16(tailwindcss@3.4.17)
@@ -50,6 +53,9 @@ importers:
       astro-seo:
         specifier: ^0.8.3
         version: 0.8.4(typescript@5.7.3)
+      prismic:
+        specifier: ^0.0.1
+        version: 0.0.1
       sharp:
         specifier: ^0.33.4
         version: 0.33.5
@@ -488,6 +494,10 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@prismicio/client@7.16.1':
+    resolution: {integrity: sha512-mH3JtysZyQv47OYWzuxp8vW3uWllMBJa6HD2j4cfc7vLCoxGxMrvH6Ttw12KMnChg2/exwFdq3K1OvHAtyEVdQ==}
+    engines: {node: '>=14.15.0'}
 
   '@rollup/pluginutils@5.1.4':
     resolution: {integrity: sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ==}
@@ -1341,6 +1351,10 @@ packages:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
 
+  imgix-url-builder@0.0.5:
+    resolution: {integrity: sha512-dCx3UlXghtsjySoqVCcHQHRikqDummwQEfKlxBUK/wrMzd+1ox/XX+zhqVuXKMVuZvCc84pVLEJyntQB0OOi/w==}
+    engines: {node: '>=12.7.0'}
+
   import-meta-resolve@4.1.0:
     resolution: {integrity: sha512-I6fiaX09Xivtk+THaMfAwnA3MVA5Big1WHF1Dfx9hFuvNIWpXnorlkzhcQf6ehrqQiiZECRt1poOAkPmer3ruw==}
 
@@ -1930,6 +1944,9 @@ packages:
     resolution: {integrity: sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==}
     engines: {node: '>=10.13.0'}
     hasBin: true
+
+  prismic@0.0.1:
+    resolution: {integrity: sha512-C4N6sq/MTeSibhE7hKf7L2tqsX0TyRa5Qh+nr0HopHBUZd6bONOi5qOzAJOO4A7V8NasGvjybnHY8SdHIa99nw==}
 
   prismjs@1.29.0:
     resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
@@ -3069,6 +3086,10 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
+  '@prismicio/client@7.16.1':
+    dependencies:
+      imgix-url-builder: 0.0.5
+
   '@rollup/pluginutils@5.1.4(rollup@4.34.8)':
     dependencies:
       '@types/estree': 1.0.6
@@ -4146,6 +4167,8 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
+  imgix-url-builder@0.0.5: {}
+
   import-meta-resolve@4.1.0: {}
 
   inline-style-parser@0.2.4: {}
@@ -4961,6 +4984,8 @@ snapshots:
 
   prettier@2.8.7:
     optional: true
+
+  prismic@0.0.1: {}
 
   prismjs@1.29.0: {}
 
