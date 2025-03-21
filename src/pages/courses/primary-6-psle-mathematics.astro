@@ -1,0 +1,111 @@
+---
+import Container from "@components/container.astro";
+import Layout from "@layouts/Layout.astro";
+
+const topics = [
+  {
+    title: "Numbers & Algebra",
+    subtopics: [
+      "Whole Numbers & Operations",
+      "Fractions, Decimals & Percentage",
+      "Ratio & Proportion",
+      "Algebra & Equations",
+      "Patterns & Sequences",
+    ],
+  },
+  {
+    title: "Geometry & Measurement",
+    subtopics: [
+      "Angles & Triangles",
+      "Area & Perimeter of Composite Figures",
+      "Volume of Cubes & Cuboids",
+      "Time & Speed",
+      "Conversion of Units",
+    ],
+  },
+  {
+    title: "Data & Statistics",
+    subtopics: [
+      "Data Collection & Organization",
+      "Line Graphs",
+      "Average",
+      "Probability",
+    ],
+  },
+  {
+    title: "PSLE Preparation",
+    subtopics: [
+      "PSLE Format & Requirements",
+      "Past Year Questions Practice",
+      "Time Management Strategies",
+      "Problem-Solving Techniques",
+      "Mock Exams & Assessment",
+    ],
+  },
+];
+---
+
+<Layout title="Primary 6 PSLE Mathematics | EzWin Academy">
+  <Container>
+    <div class="py-16 sm:py-20">
+      <div class="text-center mb-12">
+        <h1 class="text-4xl lg:text-5xl font-bold">
+          Primary 6 PSLE Mathematics
+        </h1>
+        <p class="mt-4 text-lg text-gray-600">
+          Comprehensive PSLE preparation and mathematical mastery
+        </p>
+      </div>
+
+      <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-sm p-8 mb-12">
+          <h2 class="text-2xl font-semibold mb-4">Course Overview</h2>
+          <p class="text-gray-600 mb-6">
+            Our Primary 6 PSLE Mathematics program is designed to prepare
+            students for the PSLE examination while ensuring a deep
+            understanding of mathematical concepts. Through intensive practice,
+            strategic problem-solving approaches, and comprehensive revision,
+            students will be well-equipped to excel in their PSLE Mathematics
+            paper.
+          </p>
+        </div>
+
+        <div class="space-y-8">
+          {
+            topics.map((topic) => (
+              <div class="bg-white rounded-2xl shadow-sm p-8">
+                <h2 class="text-2xl font-semibold mb-4">{topic.title}</h2>
+                <ul class="space-y-2">
+                  {topic.subtopics.map((subtopic) => (
+                    <li class="flex items-center gap-2 text-gray-600">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5 text-primary"
+                        viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path
+                          fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                      {subtopic}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="mt-12 text-center">
+          <a
+            href="/contact"
+            class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary/90">
+            Enroll Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </Container>
+</Layout>

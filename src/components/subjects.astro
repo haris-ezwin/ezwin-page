@@ -9,6 +9,7 @@ const subjects = [
       "Comprehensive math program covering all PSLE topics with proven problem-solving techniques",
     isAvailable: true,
     icon: "mdi:math-compass",
+    levels: ["Primary 4", "Primary 5", "Primary 6"],
   },
   {
     name: "Science",
@@ -73,6 +74,18 @@ const subjects = [
             <p class="mt-6 text-base leading-7 text-gray-600">
               {subject.description}
             </p>
+            {subject.levels && (
+              <div class="mt-4">
+                <p class="text-sm font-medium text-gray-700">Available for:</p>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  {subject.levels.map((level) => (
+                    <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                      {level}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
             {subject.isAvailable && (
               <a
                 href="#"
