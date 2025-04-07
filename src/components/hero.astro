@@ -1,27 +1,94 @@
 ---
 import { Image } from "astro:assets";
-
 import Link from "@components/ui/link.astro";
+
+const testimonials = [
+  {
+    id: 1,
+    quote: "You are the best teacher I ever have!",
+    author: "Aira, P4 Student",
+    date: "April 2025",
+  },
+  {
+    id: 2,
+    quote:
+      "Aira really enjoys ur lessons and specifically say she wants you to be her permanent teacher. 😂",
+    author: "Mdm Kamilah, Parent of Aira",
+    date: "April 2025",
+  },
+  {
+    id: 3,
+    quote:
+      "Was with a friend today and she was telling me that you did a good job. Her two daugters were in your class.",
+    author: "Mdm Huda, Parent",
+    date: "",
+  },
+];
 ---
 
 <main class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-2 md:pb-2">
   <div>
-    <div
-      class="inline-block px-3 py-1 mb-4 text-sm font-medium text-primary border border-primary rounded-full">
-      Soon to be
-    </div>
     <h1
       class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
-      #1 Tuition in Singapore
+      Up to a year long of free tuition 😱
     </h1>
     <p class="text-lg mt-4 text-slate-600 max-w-xl">
-      We help students improve their grades with our tuition classes, so you can
-      focus on parenting, anytime, anywhere.
+      Worth up to $2400, with free worksheets and notes. Don't believe us?
     </p>
     <div class="mt-6">
       <Link href="https://ez1.sg/free-trial" style="primary" class="bg-primary">
-        Book Free Trial
+        Try for free!
       </Link>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+      {
+        testimonials.map((testimonial) => (
+          <div class="text-center">
+            <div class="flex justify-center text-yellow-400 mb-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            </div>
+            <p class="text-sm text-gray-600 italic">"{testimonial.quote}"</p>
+            <p class="text-xs text-gray-500 mt-2">{testimonial.author}</p>
+            <p class="text-xs text-gray-400">{testimonial.date}</p>
+          </div>
+        ))
+      }
     </div>
   </div>
 
