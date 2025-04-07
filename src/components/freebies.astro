@@ -1,8 +1,8 @@
 ---
 const freebies = [
   {
-    name: "Primary 6 Freebies",
-    status: "Coming Soon",
+    name: "Primary 6 Math",
+    status: "Worth up to $2400",
     isAvailable: false,
     icon: "mdi:gift-outline",
     description: `
@@ -10,10 +10,12 @@ const freebies = [
       📚 Free 10-Year Series (answers + video explanation) (Coming Soon)<br/>
       📝 3 Free Mock Exam Papers (Coming Soon)
     `,
+    slotsLeft: 5,
+    worth: 2400,
   },
   {
-    name: "Primary 4/5 Freebies",
-    status: "Coming Soon",
+    name: "Primary 4/5 Math",
+    status: "Worth up to $1500",
     isAvailable: false,
     icon: "mdi:gift",
     description: `
@@ -21,6 +23,8 @@ const freebies = [
       📄 2024 WA2 Paper (answers + video explanation) (Coming Soon)<br/>
       📝 3 Free Mock Exam Papers (Coming Soon)
     `,
+    slotsLeft: 4,
+    worth: 1500,
   },
 ];
 import { Icon } from "astro-icon/components";
@@ -43,14 +47,19 @@ import { Icon } from "astro-icon/components";
                 {item.name}
               </h3>
             </div>
-            <p
-              class={`mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                item.isAvailable
-                  ? "bg-green-50 text-green-700"
-                  : "bg-gray-100 text-gray-600"
-              }`}>
-              {item.status}
-            </p>
+            <div class="flex items-center justify-between">
+              <p
+                class={`mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                  item.isAvailable
+                    ? "bg-green-50 text-green-700"
+                    : "bg-gray-100 text-gray-600"
+                }`}>
+                {item.status}
+              </p>
+              <p class="mt-2 text-sm font-medium text-red-600">
+                Only {item.slotsLeft} slots left!
+              </p>
+            </div>
             <p
               class="mt-6 text-base leading-7 text-gray-600"
               set:html={item.description}
