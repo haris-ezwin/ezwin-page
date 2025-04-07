@@ -1,0 +1,70 @@
+---
+const freebies = [
+  {
+    name: "Primary 6 Freebies",
+    status: "Coming Soon",
+    isAvailable: false,
+    icon: "mdi:gift-outline",
+    description: `
+      🎓 Free lessons for the whole year of 2025 <br/>
+      📚 Free 10-Year Series (answers + video explanation) (Coming Soon)<br/>
+      📝 3 Free Mock Exam Papers (Coming Soon)
+    `,
+  },
+  {
+    name: "Primary 4/5 Freebies",
+    status: "Coming Soon",
+    isAvailable: false,
+    icon: "mdi:gift",
+    description: `
+      🕑 Free 2 Months Trial<br/>
+      📄 2024 WA2 Paper (answers + video explanation) (Coming Soon)<br/>
+      📝 3 Free Mock Exam Papers (Coming Soon)
+    `,
+  },
+];
+import { Icon } from "astro-icon/components";
+---
+
+<div class="py-5 sm:py-20">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div
+      class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-6 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+      {
+        freebies.map((item) => (
+          <div
+            class={`flex flex-col ring-1 rounded-3xl p-8 ${item.isAvailable ? "ring-primary" : "ring-gray-200"}`}>
+            <div class="flex items-center gap-3">
+              <div
+                class={`p-2 rounded-full ${item.isAvailable ? "bg-primary text-white" : "bg-gray-100 text-gray-600"}`}>
+                <Icon name={item.icon} class="w-6 h-6" />
+              </div>
+              <h3 class="text-xl font-semibold leading-7 text-gray-900">
+                {item.name}
+              </h3>
+            </div>
+            <p
+              class={`mt-2 inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                item.isAvailable
+                  ? "bg-green-50 text-green-700"
+                  : "bg-gray-100 text-gray-600"
+              }`}>
+              {item.status}
+            </p>
+            <p
+              class="mt-6 text-base leading-7 text-gray-600"
+              set:html={item.description}
+            />
+            <div class="mt-8">
+              <a
+                href="#contact-form"
+                class="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                {item.isAvailable ? "Get Now" : "Try Now"}
+              </a>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
