@@ -1,0 +1,276 @@
+---
+import examPapersData from "@utils/exam-paper.js";
+
+interface ExamPaper {
+  title: string;
+  description: string;
+  imageUrl: string;
+  downloadUrl: string;
+  videoExplanationUrl: string;
+  level: string;
+  type: string;
+  school: string;
+  year: string;
+  subject: string;
+  worksheetUrl: string;
+}
+
+// Get all unique values for filters
+const levels = Array.from(
+  new Set(examPapersData.map((paper) => paper.level)),
+).sort();
+const types = Array.from(
+  new Set(examPapersData.map((paper) => paper.type)),
+).sort();
+---
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+  <!-- Filters Section -->
+  <div class="mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+    <div class="flex flex-col md:flex-row md:items-center gap-6">
+      <!-- Level Filter -->
+      <div class="flex-1">
+        <h3 class="text-sm font-medium text-gray-700 mb-3">Level</h3>
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            data-filter="level"
+            data-value="">
+            All Levels
+          </button>
+          {
+            levels.map((level) => (
+              <button
+                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                data-filter="level"
+                data-value={level}>
+                {level}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Type Filter -->
+      <div class="flex-1">
+        <h3 class="text-sm font-medium text-gray-700 mb-3">Exam Type</h3>
+        <div class="flex flex-wrap gap-2">
+          <button
+            class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            data-filter="type"
+            data-value="">
+            All Types
+          </button>
+          {
+            types.map((type) => (
+              <button
+                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                data-filter="type"
+                data-value={type}>
+                {type}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exam Papers List -->
+  <div
+    class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="divide-y divide-gray-100">
+      {
+        examPapersData.map((paper) => (
+          <div
+            class="p-6 hover:bg-gray-50 transition-colors duration-200"
+            data-level={paper.level}
+            data-type={paper.type}>
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                  {paper.title}
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                    {paper.level}
+                  </span>
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                    {paper.type}
+                  </span>
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                    {paper.year}
+                  </span>
+                </div>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-2">
+                {paper.worksheetUrl ? (
+                  <a
+                    href={paper.worksheetUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    <svg
+                      class="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Try Online
+                  </a>
+                ) : (
+                  <div class="relative">
+                    <span class="absolute -top-5 left-0 text-xs text-gray-500 italic">
+                      Coming Soon
+                    </span>
+                    <button
+                      disabled
+                      class="inline-flex items-center justify-center rounded-lg bg-gray-300 px-4 py-2 text-sm font-semibold text-gray-400 cursor-not-allowed">
+                      <svg
+                        class="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Try Online
+                    </button>
+                  </div>
+                )}
+                <a
+                  href={paper.downloadUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center justify-center rounded-lg border-2 border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  <svg
+                    class="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
+                  </svg>
+                  Download
+                </a>
+                {paper.videoExplanationUrl ? (
+                  <a
+                    href={paper.videoExplanationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center justify-center rounded-lg border-2 border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    <svg
+                      class="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                    Watch
+                  </a>
+                ) : (
+                  <div class="relative">
+                    <span class="absolute -top-5 left-0 text-xs text-gray-500 italic">
+                      Coming Soon
+                    </span>
+                    <button
+                      disabled
+                      class="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-sm font-semibold text-gray-400 cursor-not-allowed">
+                      <svg
+                        class="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                      Watch
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<script>
+  // State management
+  const state = {
+    level: "",
+    type: "",
+  };
+
+  // Get all exam paper cards
+  const examPapers = document.querySelectorAll<HTMLElement>("[data-level]");
+
+  // Filter function
+  function filterPapers() {
+    examPapers.forEach((paper) => {
+      const matchesLevel = !state.level || paper.dataset.level === state.level;
+      const matchesType = !state.type || paper.dataset.type === state.type;
+
+      if (matchesLevel && matchesType) {
+        paper.style.display = "block";
+      } else {
+        paper.style.display = "none";
+      }
+    });
+  }
+
+  // Add event listeners to all filter buttons
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-filter]")
+    .forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const target = e.target as HTMLButtonElement;
+        if (!target) return;
+
+        const filterType = target.dataset.filter;
+        const filterValue = target.dataset.value;
+        if (!filterType) return;
+
+        // Update active state
+        document
+          .querySelectorAll(`[data-filter="${filterType}"]`)
+          .forEach((btn) => {
+            btn.classList.remove("border-primary", "text-primary");
+            btn.classList.add("border-gray-200", "text-gray-700");
+          });
+        target.classList.remove("border-gray-200", "text-gray-700");
+        target.classList.add("border-primary", "text-primary");
+
+        state[filterType] = filterValue || "";
+        filterPapers();
+      });
+    });
+
+  // Initial filter
+  filterPapers();
+</script>

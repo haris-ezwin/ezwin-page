@@ -1,0 +1,36 @@
+---
+import Layout from "@layouts/Layout.astro";
+import ExamPapers from "@components/exam-papers.astro";
+---
+
+<Layout title="Free Exam Papers | EzWin Academy">
+  <main>
+    <!-- Exam Papers Section -->
+    <section class="py-12 bg-gray-50">
+      <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+          Free Exam Papers + Answer Sheet
+        </h2>
+        <ExamPapers />
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-12 bg-white">
+      <div class="max-w-6xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">
+          Ready to Get Started?
+        </h2>
+        <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          Book a free trial session and experience our teaching methods
+          firsthand.
+        </p>
+        <a
+          href="#contact-form"
+          class="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-lg font-semibold text-white shadow-sm hover:bg-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          Book Free Trial
+        </a>
+      </div>
+    </section>
+  </main>
+</Layout>
