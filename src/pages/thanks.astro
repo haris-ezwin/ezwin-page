@@ -3,7 +3,6 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Thank You - EZWin">
-  <meta http-equiv="refresh" content="5;url=/" />
   <div class="thank-you-container">
     <h1>Thank You!</h1>
     <p>We have received your registration and will contact you shortly.</p>
@@ -70,13 +69,11 @@ import Layout from "../layouts/Layout.astro";
 
   const countdown = setInterval(() => {
     timeLeft--;
-    if (countdownElement) {
+    if (countdownElement && timeLeft >= 0) {
       countdownElement.textContent = timeLeft.toString();
     }
-
     if (timeLeft <= 0) {
       clearInterval(countdown);
-      window.location.href = "/";
     }
   }, 1000);
 </script>
