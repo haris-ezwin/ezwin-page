@@ -8,7 +8,7 @@ const offers = [
   {
     startDate: "2024-01-01",
     endDate: "2025-09-30",
-    text: "2 Months Free Trial Online Lessons for P4/P5 Math",
+    text: "1 Month Free Trial Online Lessons for P4/P5 Math",
     url: "https://ez1.sg/free-trial"
   }
 ];
