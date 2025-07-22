@@ -2,6 +2,7 @@
 import Container from "@components/container.astro";
 import Layout from "@layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import { getFormattedDate } from "@utils/all";
 
 // Fetch all blog posts using Astro's content collections
 const posts = await getCollection("blog", ({ data }) => {
@@ -48,7 +49,7 @@ const sortedPosts = posts.sort(
                 </p>
                 <div class="mt-4 flex items-center justify-between">
                   <span class="text-sm text-gray-500">
-                    {post.data.publishDate.toLocaleDateString()}
+                    {getFormattedDate(post.data.publishDate)}
                   </span>
                   <a
                     href={`/blog/${post.slug}`}

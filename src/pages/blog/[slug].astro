@@ -29,7 +29,15 @@ const { Content } = await post.render();
             {post.data.title}
           </h1>
           <div class="flex items-center gap-4 text-gray-600 mb-6">
-            <span>{post.data.publishDate.toLocaleDateString()}</span>
+            <span
+              >{
+                post.data.publishDate.toLocaleDateString("en-GB", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })
+              }</span
+            >
             <span>•</span>
             <span>{post.data.author}</span>
             {
