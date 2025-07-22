@@ -7,7 +7,7 @@ author: "Haris Samingan"
 category: "Education"
 tags: ["worksheets", "mathematics", "learning"]
 image: {
-  src: "public/blog/improved-worksheets.jpg",
+  src: "../blog/improved-worksheets.jpg",
   alt: "Improved worksheets for learning"
 }
 ---
