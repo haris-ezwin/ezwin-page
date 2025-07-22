@@ -1,11 +1,17 @@
 ---
 import Container from "@components/container.astro";
 import Layout from "@layouts/Layout.astro";
-import { getAllBlogs } from "../prismic";
+import { getCollection } from "astro:content";
 
-// Fetch all blog posts
-const response = await getAllBlogs();
-const posts = response.results;
+// Fetch all blog posts using Astro's content collections
+const posts = await getCollection("blog", ({ data }) => {
+  return !data.draft; // Only show non-draft posts
+});
+
+// Sort posts by publish date (newest first)
+const sortedPosts = posts.sort(
+  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
+);
 ---
 
 <Layout title="Blog | EzWin Academy">
@@ -20,12 +26,12 @@ const posts = response.results;
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {
-          posts.map((post) => (
+          sortedPosts.map((post) => (
             <article class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-              {post.data.image?.url && (
+              {post.data.image && (
                 <div class="aspect-video">
                   <img
-                    src={post.data.image.url}
+                    src={post.data.image.src}
                     alt={post.data.image.alt || ""}
                     class="w-full h-full object-cover"
                   />
@@ -33,18 +39,19 @@ const posts = response.results;
               )}
               <div class="p-6">
                 <h2 class="text-xl font-semibold text-gray-900 line-clamp-2">
-                  <a href={`/blog/${post.uid}`} class="hover:text-primary">
-                    {post.data.title[0]?.text || "Untitled"}
+                  <a href={`/blog/${post.slug}`} class="hover:text-primary">
+                    {post.data.title}
                   </a>
                 </h2>
                 <p class="mt-3 text-gray-600 line-clamp-3">
-                  {post.data.excerpt ||
-                    post.data.body[0]?.text ||
-                    "No preview available"}
+                  {post.data.snippet || "No preview available"}
                 </p>
-                <div class="mt-4">
+                <div class="mt-4 flex items-center justify-between">
+                  <span class="text-sm text-gray-500">
+                    {post.data.publishDate.toLocaleDateString()}
+                  </span>
                   <a
-                    href={`/blog/${post.uid}`}
+                    href={`/blog/${post.slug}`}
                     class="text-primary font-medium hover:text-primary/80 inline-flex items-center gap-2">
                     Read More
                     <svg

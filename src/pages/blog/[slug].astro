@@ -1,91 +1,127 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
-import { getAllBlogs } from "../prismic.js";
+import { getCollection } from "astro:content";
 
 export async function getStaticPaths() {
-  const posts = await getAllBlogs().then((res) => res.results);
+  const posts = await getCollection("blog", ({ data }) => {
+    return !data.draft; // Only generate pages for non-draft posts
+  });
+
   return posts.map((post) => {
-    return { params: { slug: post.uid }, props: { post } };
+    return {
+      params: { slug: post.slug },
+      props: { post },
+    };
   });
 }
-const { post } = Astro.props;
-console.log(post);
 
-let title = post.data.title[0].text;
+const { post } = Astro.props;
+const { Content } = await post.render();
 ---
 
-<Layout title={title}>
+<Layout title={post.data.title}>
   <Container>
     <div class="py-10">
       <article class="max-w-3xl mx-auto">
-        <h1 class="text-4xl font-bold text-gray-800 mb-4">{title}</h1>
-        <div class="prose prose-lg max-w-none">
+        <header class="mb-8">
+          <h1 class="text-4xl font-bold text-gray-800 mb-4">
+            {post.data.title}
+          </h1>
+          <div class="flex items-center gap-4 text-gray-600 mb-6">
+            <span>{post.data.publishDate.toLocaleDateString()}</span>
+            <span>•</span>
+            <span>{post.data.author}</span>
+            {
+              post.data.category && (
+                <>
+                  <span>•</span>
+                  <span class="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm">
+                    {post.data.category}
+                  </span>
+                </>
+              )
+            }
+          </div>
           {
-            post.data.body && (
-              <div class="mt-8">
-                {post.data.body.map((item, index) => {
-                  if (item.type === "paragraph") {
-                    return <p class="mb-4">{item.text}</p>;
-                  } else if (item.type === "heading1") {
-                    return <h1 class="text-3xl font-bold mb-4">{item.text}</h1>;
-                  } else if (item.type === "heading2") {
-                    return <h2 class="text-2xl font-bold mb-3">{item.text}</h2>;
-                  } else if (item.type === "heading3") {
-                    return <h3 class="text-xl font-bold mb-3">{item.text}</h3>;
-                  } else if (item.type === "embed") {
-                    return (
-                      <div class="my-8">
-                        <div
-                          class="embed-container"
-                          set:html={item.oembed?.html || item.embed_url || ""}
-                        />
-                        {item.oembed?.title && (
-                          <p class="text-sm text-gray-600 mt-2 italic">
-                            {item.oembed.title}
-                          </p>
-                        )}
-                      </div>
-                    );
-                  } else {
-                    return <div class="mb-4">{item.text || ""}</div>;
-                  }
-                })}
-              </div>
+            post.data.snippet && (
+              <p class="text-lg text-gray-600 italic">{post.data.snippet}</p>
             )
           }
+        </header>
+
+        <div class="prose prose-lg max-w-none">
+          <Content />
         </div>
+
+        {
+          post.data.tags && post.data.tags.length > 0 && (
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <h3 class="text-sm font-semibold text-gray-700 mb-2">Tags:</h3>
+              <div class="flex flex-wrap gap-2">
+                {post.data.tags.map((tag) => (
+                  <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )
+        }
       </article>
     </div>
   </Container>
 </Layout>
 
 <style>
-  .embed-container {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    overflow: hidden;
-    border-radius: 0.5rem;
+  .prose {
+    color: #374151;
   }
 
-  .embed-container iframe,
-  .embed-container embed,
-  .embed-container object,
-  .embed-container video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
+  .prose h1 {
+    color: #111827;
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
   }
 
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .embed-container {
-      padding-bottom: 75%; /* Slightly taller on mobile */
-    }
+  .prose h2 {
+    color: #111827;
+    font-size: 1.875rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose h3 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .prose p {
+    margin-bottom: 1rem;
+    line-height: 1.75;
+  }
+
+  .prose ul {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  .prose li {
+    margin-bottom: 0.5rem;
+  }
+
+  .prose strong {
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .prose em {
+    font-style: italic;
   }
 </style>
