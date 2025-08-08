@@ -1,5 +1,5 @@
 ---
-import examPapersData from "@utils/exam-paper.js";
+import { getExamPapers } from "@utils/supabase.js";
 
 interface ExamPaper {
   title: string;
@@ -13,6 +13,29 @@ interface ExamPaper {
   year: string;
   subject: string;
   worksheetUrl: string;
+}
+
+// Fetch exam papers from Supabase
+let examPapersData: ExamPaper[] = await getExamPapers();
+
+// Fallback to static data if Supabase fails
+if (!examPapersData || examPapersData.length === 0) {
+  console.log("Falling back to static exam papers data");
+  const staticData = await import("@utils/exam-paper.js");
+  // Transform static data to match interface
+  examPapersData = staticData.default.map((paper: any) => ({
+    title: paper.title,
+    description: "",
+    imageUrl: "",
+    downloadUrl: paper.downloadUrl || "",
+    videoExplanationUrl: paper.videoExplanationUrl || "",
+    level: paper.level || "",
+    type: paper.type || "",
+    school: paper.school || "",
+    year: paper.year || "",
+    subject: paper.subject || "Mathematics",
+    worksheetUrl: paper.worksheetUrl || "",
+  }));
 }
 
 // Get all unique values for filters
@@ -79,59 +102,42 @@ const types = Array.from(
   <!-- Exam Papers List -->
   <div
     class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="divide-y divide-gray-100">
-      {
-        examPapersData.map((paper) => (
-          <div
-            class="p-6 hover:bg-gray-50 transition-colors duration-200"
-            data-level={paper.level}
-            data-type={paper.type}>
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div class="flex-1">
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                  {paper.title}
-                </h3>
-                <div class="flex flex-wrap gap-2">
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                    {paper.level}
-                  </span>
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                    {paper.type}
-                  </span>
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                    {paper.year}
-                  </span>
-                </div>
-              </div>
-              <div class="flex flex-col sm:flex-row gap-2">
-                {paper.worksheetUrl ? (
-                  <a
-                    href={paper.worksheetUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                    <svg
-                      class="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                    Try Online
-                  </a>
-                ) : (
-                  <div class="relative">
-                    <span class="absolute -top-5 left-0 text-xs text-gray-500 italic">
-                      Coming Soon
+    {
+      examPapersData.length === 0 ? (
+        <div class="p-8 text-center">
+          <p class="text-gray-500">No exam papers available at the moment.</p>
+        </div>
+      ) : (
+        <div class="divide-y divide-gray-100">
+          {examPapersData.map((paper) => (
+            <div
+              class="p-6 hover:bg-gray-50 transition-colors duration-200"
+              data-level={paper.level}
+              data-type={paper.type}>
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                    {paper.title}
+                  </h3>
+                  <div class="flex flex-wrap gap-2">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                      {paper.level}
                     </span>
-                    <button
-                      disabled
-                      class="inline-flex items-center justify-center rounded-lg bg-gray-300 px-4 py-2 text-sm font-semibold text-gray-400 cursor-not-allowed">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                      {paper.type}
+                    </span>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+                      {paper.year}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2">
+                  {paper.worksheetUrl ? (
+                    <a
+                      href={paper.worksheetUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                       <svg
                         class="w-4 h-4 mr-2"
                         fill="none"
@@ -145,31 +151,33 @@ const types = Array.from(
                         />
                       </svg>
                       Try Online
-                    </button>
-                  </div>
-                )}
-                <a
-                  href={paper.downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="inline-flex items-center justify-center rounded-lg border-2 border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                  <svg
-                    class="w-4 h-4 mr-2"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  Download
-                </a>
-                {paper.videoExplanationUrl ? (
+                    </a>
+                  ) : (
+                    <div class="relative">
+                      <span class="absolute -top-5 left-0 text-xs text-gray-500 italic">
+                        Coming Soon
+                      </span>
+                      <button
+                        disabled
+                        class="inline-flex items-center justify-center rounded-lg bg-gray-300 px-4 py-2 text-sm font-semibold text-gray-400 cursor-not-allowed">
+                        <svg
+                          class="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                        Try Online
+                      </button>
+                    </div>
+                  )}
                   <a
-                    href={paper.videoExplanationUrl}
+                    href={paper.downloadUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex items-center justify-center rounded-lg border-2 border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -182,19 +190,17 @@ const types = Array.from(
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         stroke-width="2"
-                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                       />
                     </svg>
-                    Watch
+                    Download
                   </a>
-                ) : (
-                  <div class="relative">
-                    <span class="absolute -top-5 left-0 text-xs text-gray-500 italic">
-                      Coming Soon
-                    </span>
-                    <button
-                      disabled
-                      class="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-sm font-semibold text-gray-400 cursor-not-allowed">
+                  {paper.videoExplanationUrl ? (
+                    <a
+                      href={paper.videoExplanationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center justify-center rounded-lg border-2 border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                       <svg
                         class="w-4 h-4 mr-2"
                         fill="none"
@@ -208,15 +214,38 @@ const types = Array.from(
                         />
                       </svg>
                       Watch
-                    </button>
-                  </div>
-                )}
+                    </a>
+                  ) : (
+                    <div class="relative">
+                      <span class="absolute -top-5 left-0 text-xs text-gray-500 italic">
+                        Coming Soon
+                      </span>
+                      <button
+                        disabled
+                        class="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-sm font-semibold text-gray-400 cursor-not-allowed">
+                        <svg
+                          class="w-4 h-4 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                          />
+                        </svg>
+                        Watch
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))
-      }
-    </div>
+          ))}
+        </div>
+      )
+    }
   </div>
 </div>
 
