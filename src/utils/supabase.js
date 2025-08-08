@@ -40,7 +40,8 @@ export async function getExamPapers() {
         school: schoolName,
         year: paper.year ? paper.year.toString() : '',
         subject: 'Mathematics', // Default since not in DB
-        worksheetUrl: paper.worksheet_url || ''
+        worksheetUrl: paper.worksheet_url || '',
+        difficulty: paper.difficulty || 3 // Default to 3 if not set
       };
     })
   } catch (error) {
