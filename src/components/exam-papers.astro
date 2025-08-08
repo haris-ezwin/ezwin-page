@@ -38,6 +38,23 @@ if (!examPapersData || examPapersData.length === 0) {
   }));
 }
 
+// Group exam papers by level (Primary 5 first, then Primary 4)
+const groupedPapers = examPapersData.reduce((acc, paper) => {
+  const level = paper.level;
+  if (!acc[level]) {
+    acc[level] = [];
+  }
+  acc[level].push(paper);
+  return acc;
+}, {} as Record<string, ExamPaper[]>);
+
+// Sort levels to put Primary 5 first
+const sortedLevels = Object.keys(groupedPapers).sort((a, b) => {
+  if (a.includes('5') && b.includes('4')) return -1;
+  if (a.includes('4') && b.includes('5')) return 1;
+  return a.localeCompare(b);
+});
+
 // Get all unique values for filters
 const levels = Array.from(
   new Set(examPapersData.map((paper) => paper.level)),
@@ -47,16 +64,16 @@ const types = Array.from(
 ).sort();
 ---
 
-<div class="max-w-6xl mx-auto px-4 py-8">
+<div class="max-w-6xl mx-auto px-2 py-2">
   <!-- Filters Section -->
-  <div class="mb-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-    <div class="flex flex-col md:flex-row md:items-center gap-6">
+  <div class="mb-2 bg-white p-2 rounded-lg shadow-sm border border-gray-100">
+    <div class="flex flex-col md:flex-row md:items-center gap-2">
       <!-- Level Filter -->
       <div class="flex-1">
-        <h3 class="text-sm font-medium text-gray-700 mb-3">Level</h3>
-        <div class="flex flex-wrap gap-2">
+        <h3 class="text-xs font-medium text-gray-700 mb-1">Level</h3>
+        <div class="flex flex-wrap gap-1">
           <button
-            class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            class="px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary"
             data-filter="level"
             data-value="">
             All Levels
@@ -64,7 +81,7 @@ const types = Array.from(
           {
             levels.map((level) => (
               <button
-                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                class="px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 data-filter="level"
                 data-value={level}>
                 {level}
@@ -76,10 +93,10 @@ const types = Array.from(
 
       <!-- Type Filter -->
       <div class="flex-1">
-        <h3 class="text-sm font-medium text-gray-700 mb-3">Exam Type</h3>
-        <div class="flex flex-wrap gap-2">
+        <h3 class="text-xs font-medium text-gray-700 mb-1">Exam Type</h3>
+        <div class="flex flex-wrap gap-1">
           <button
-            class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            class="px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary"
             data-filter="type"
             data-value="">
             All Types
@@ -87,7 +104,7 @@ const types = Array.from(
           {
             types.map((type) => (
               <button
-                class="px-4 py-2 rounded-lg border-2 border-gray-200 text-sm font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                class="px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 data-filter="type"
                 data-value={type}>
                 {type}
@@ -101,145 +118,148 @@ const types = Array.from(
 
   <!-- Exam Papers List -->
   <div
-    class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
     {
       examPapersData.length === 0 ? (
-        <div class="p-8 text-center">
-          <p class="text-gray-500">No exam papers available at the moment.</p>
+        <div class="p-4 text-center">
+          <p class="text-gray-500 text-sm">
+            No exam papers available at the moment.
+          </p>
         </div>
       ) : (
-        <div class="divide-y divide-gray-100">
-          {examPapersData.map((paper) => (
-            <div
-              class="p-6 hover:bg-gray-50 transition-colors duration-200"
-              data-level={paper.level}
-              data-type={paper.type}>
-              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div class="flex-1">
-                  <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                    {paper.title}
-                  </h3>
-                  <div class="flex flex-wrap gap-2">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                      {paper.level}
-                    </span>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                      {paper.type}
-                    </span>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                      {paper.year}
-                    </span>
+        <div>
+          {sortedLevels.map((level) => (
+            <div class="border-b border-gray-100 last:border-b-0">
+              <!-- Level Header -->
+              <div class="bg-gray-50 px-2 py-1 border-b border-gray-100">
+                <h2 class="text-sm font-semibold text-gray-900">{level}</h2>
+              </div>
+              
+              <!-- Papers for this level -->
+              <div class="divide-y divide-gray-100">
+                {groupedPapers[level].map((paper) => (
+                  <div
+                    class="p-2 hover:bg-gray-50 transition-colors duration-200"
+                    data-level={paper.level}
+                    data-type={paper.type}>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                      <div class="flex-1">
+                        <h3 class="text-sm font-semibold text-gray-900">
+                          {paper.title}
+                        </h3>
+                      </div>
+                      <div class="flex flex-col sm:flex-row gap-1">
+                        {paper.worksheetUrl ? (
+                          <a
+                            href={paper.worksheetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center justify-center rounded bg-primary px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
+                            <svg
+                              class="w-3 h-3 mr-1"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                              />
+                            </svg>
+                            Try Online
+                          </a>
+                        ) : (
+                          <div class="relative">
+                            <span class="absolute -top-3 left-0 text-xs text-gray-500 italic">
+                              Coming Soon
+                            </span>
+                            <button
+                              disabled
+                              class="inline-flex items-center justify-center rounded bg-gray-300 px-2 py-1 text-xs font-semibold text-gray-400 cursor-not-allowed">
+                              <svg
+                                class="w-3 h-3 mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                />
+                              </svg>
+                              Try Online
+                            </button>
+                          </div>
+                        )}
+                        <a
+                          href={paper.downloadUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="inline-flex items-center justify-center rounded border border-primary px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
+                          <svg
+                            class="w-3 h-3 mr-1"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                            />
+                          </svg>
+                          Download
+                        </a>
+                        {paper.videoExplanationUrl ? (
+                          <a
+                            href={paper.videoExplanationUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center justify-center rounded border border-primary px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
+                            <svg
+                              class="w-3 h-3 mr-1"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                              />
+                            </svg>
+                            Watch
+                          </a>
+                        ) : (
+                          <div class="relative">
+                            <span class="absolute -top-3 left-0 text-xs text-gray-500 italic">
+                              Coming Soon
+                            </span>
+                            <button
+                              disabled
+                              class="inline-flex items-center justify-center rounded border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-400 cursor-not-allowed">
+                              <svg
+                                class="w-3 h-3 mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                />
+                              </svg>
+                              Watch
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div class="flex flex-col sm:flex-row gap-2">
-                  {paper.worksheetUrl ? (
-                    <a
-                      href={paper.worksheetUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                      <svg
-                        class="w-4 h-4 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                      Try Online
-                    </a>
-                  ) : (
-                    <div class="relative">
-                      <span class="absolute -top-5 left-0 text-xs text-gray-500 italic">
-                        Coming Soon
-                      </span>
-                      <button
-                        disabled
-                        class="inline-flex items-center justify-center rounded-lg bg-gray-300 px-4 py-2 text-sm font-semibold text-gray-400 cursor-not-allowed">
-                        <svg
-                          class="w-4 h-4 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                          />
-                        </svg>
-                        Try Online
-                      </button>
-                    </div>
-                  )}
-                  <a
-                    href={paper.downloadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center justify-center rounded-lg border-2 border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                    <svg
-                      class="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                      />
-                    </svg>
-                    Download
-                  </a>
-                  {paper.videoExplanationUrl ? (
-                    <a
-                      href={paper.videoExplanationUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center justify-center rounded-lg border-2 border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                      <svg
-                        class="w-4 h-4 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        />
-                      </svg>
-                      Watch
-                    </a>
-                  ) : (
-                    <div class="relative">
-                      <span class="absolute -top-5 left-0 text-xs text-gray-500 italic">
-                        Coming Soon
-                      </span>
-                      <button
-                        disabled
-                        class="inline-flex items-center justify-center rounded-lg border-2 border-gray-300 px-4 py-2 text-sm font-semibold text-gray-400 cursor-not-allowed">
-                        <svg
-                          class="w-4 h-4 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          />
-                        </svg>
-                        Watch
-                      </button>
-                    </div>
-                  )}
-                </div>
+                ))}
               </div>
             </div>
           ))}
