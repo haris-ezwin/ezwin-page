@@ -1,9 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from '../types/supabase'
+
+interface VideoExplanation {
+  url: string;
+  title: string;
+}
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || 'https://qhzxhduqjxnhyilumrcy.supabase.co'
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFoenhoZHVxanhuaHlpbHVtcmN5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwOTc5MzksImV4cCI6MjA1OTY3MzkzOX0.unaIkwS8rgtFx6UtBuBQgZ-0iUbYOykvbfrpDA_QsFA'
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
 
 // Function to fetch exam papers from Supabase
 export async function getExamPapers() {
@@ -34,7 +40,7 @@ export async function getExamPapers() {
         description: '', // Not available in current DB schema
         imageUrl: '', // Not available in current DB schema
         downloadUrl: paper.paper_url || '',
-        videoExplanationUrl: paper.videos && paper.videos.length > 0 ? paper.videos[0] : '',
+        videoExplanationUrl: paper.videos || [],
         level: paper.level ? `Primary ${paper.level.charAt(1)}` : '',
         type: paper.exam_type ? paper.exam_type.toUpperCase() : '',
         school: schoolName,
