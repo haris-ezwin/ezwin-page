@@ -1,6 +1,4 @@
 ---
-import { getExamPapers } from "@utils/supabase.ts";
-
 interface VideoExplanation {
   url: string;
   title: string;
@@ -21,118 +19,69 @@ interface ExamPaper {
   difficulty: number;
 }
 
-// Fetch exam papers from Supabase
-let examPapersDataRaw = await getExamPapers();
-
-// Map and validate the data to match the ExamPaper interface
-let examPapersData: ExamPaper[] = examPapersDataRaw.map((paper: any) => ({
-  title: paper.title || "",
-  description: paper.description || "",
-  imageUrl: paper.imageUrl || "",
-  downloadUrl: paper.downloadUrl || "",
-  videoExplanationUrl: Array.isArray(paper.videoExplanationUrl)
-    ? paper.videoExplanationUrl
-    : [],
-  level: paper.level || "",
-  type: paper.type || "",
-  school: paper.school || "",
-  year: paper.year || "",
-  subject: paper.subject || "",
-  worksheetUrl: paper.worksheetUrl || "",
-  difficulty: typeof paper.difficulty === "number" ? paper.difficulty : 3,
-}));
-
-// Fallback to static data if Supabase fails
-
-// Function to get difficulty color based on rating
-function getDifficultyColor(rating: number): string {
-  if (rating <= 2) return 'bg-green-100 text-green-700';
-  if (rating <= 3) return 'bg-yellow-100 text-yellow-700';
-  return 'bg-red-100 text-red-700';
-}
-
-// Function to get difficulty text based on rating
-function getDifficultyText(rating: number): string {
-  if (rating <= 2) return 'Easy';
-  if (rating <= 3) return 'Medium';
-  return 'Difficult';
-}
-
-
-
-// Group exam papers by level (Primary 5 first, then Primary 4)
-const groupedPapers = examPapersData.reduce((acc, paper) => {
-  const level = paper.level;
-  if (!acc[level]) {
-    acc[level] = [];
-  }
-  acc[level].push(paper);
-  return acc;
-}, {} as Record<string, ExamPaper[]>);
-
-// Sort levels to put Primary 5 first
-const sortedLevels = Object.keys(groupedPapers).sort((a, b) => {
-  if (a.includes('5') && b.includes('4')) return -1;
-  if (a.includes('4') && b.includes('5')) return 1;
-  return a.localeCompare(b);
-});
-
-// Get all unique values for filters
-const levels = Array.from(
-  new Set(examPapersData.map((paper) => paper.level)),
-).sort();
-const types = Array.from(
-  new Set(examPapersData.map((paper) => paper.type)),
-).sort();
+// These functions will be moved to the client-side script
 ---
 
 <div class="max-w-6xl mx-auto px-2 py-2">
+  <!-- Loading State -->
+  <div
+    id="loading-state"
+    class="mb-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center">
+    <div class="flex items-center justify-center">
+      <svg
+        class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24">
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+      <span class="text-sm text-gray-600">Loading exam papers...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div
+    id="error-state"
+    class="mb-2 bg-red-50 p-4 rounded-lg shadow-sm border border-red-200 text-center hidden">
+    <p class="text-sm text-red-600">
+      Failed to load exam papers. Please refresh the page.
+    </p>
+    <button
+      id="retry-btn"
+      class="mt-2 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">
+      Retry
+    </button>
+  </div>
+
   <!-- Filters Section -->
-  <div class="mb-2 bg-white p-2 rounded-lg shadow-sm border border-gray-100">
+  <div
+    id="filters-section"
+    class="mb-2 bg-white p-2 rounded-lg shadow-sm border border-gray-100 hidden">
     <div class="flex flex-col md:flex-row md:items-center gap-2">
       <!-- Level Filter -->
       <div class="flex-1">
         <h3 class="text-xs font-medium text-gray-700 mb-1">Level</h3>
-        <div class="flex flex-wrap gap-1">
-          <button
-            class="px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            data-filter="level"
-            data-value="">
-            All Levels
-          </button>
-          {
-            levels.map((level) => (
-              <button
-                class="px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                data-filter="level"
-                data-value={level}>
-                {level}
-              </button>
-            ))
-          }
+        <div id="level-filters" class="flex flex-wrap gap-1">
+          <!-- Level filter buttons will be populated by JavaScript -->
         </div>
       </div>
 
       <!-- Type Filter -->
       <div class="flex-1">
         <h3 class="text-xs font-medium text-gray-700 mb-1">Exam Type</h3>
-        <div class="flex flex-wrap gap-1">
-          <button
-            class="px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            data-filter="type"
-            data-value="">
-            All Types
-          </button>
-          {
-            types.map((type) => (
-              <button
-                class="px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                data-filter="type"
-                data-value={type}>
-                {type}
-              </button>
-            ))
-          }
+        <div id="type-filters" class="flex flex-wrap gap-1">
+          <!-- Type filter buttons will be populated by JavaScript -->
         </div>
       </div>
     </div>
@@ -140,185 +89,9 @@ const types = Array.from(
 
   <!-- Exam Papers List -->
   <div
-    class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-    {
-      examPapersData.length === 0 ? (
-        <div class="p-4 text-center">
-          <p class="text-gray-500 text-sm">
-            No exam papers available at the moment.
-          </p>
-        </div>
-      ) : (
-        <div>
-          {sortedLevels.map((level) => (
-            <div class="border-b border-gray-100 last:border-b-0">
-              <!-- Level Header -->
-              <div class="bg-gray-50 px-2 py-1 border-b border-gray-100">
-                <h2 class="text-sm font-semibold text-gray-900">{level}</h2>
-              </div>
-              
-              <!-- Papers for this level -->
-              <div class="divide-y divide-gray-100">
-                {groupedPapers[level].map((paper) => {
-                  const difficultyColor = getDifficultyColor(paper.difficulty);
-                  return (
-                    <div
-                      class="p-2 hover:bg-gray-50 transition-colors duration-200"
-                      data-level={paper.level}
-                      data-type={paper.type}
-                      data-paper-id={paper.title}>
-                      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                        <div class="flex-1">
-                          <div class="flex items-center gap-2">
-                            <h3 class="text-sm font-semibold text-gray-900">
-                              {paper.title}
-                            </h3>
-                            <div class="flex items-center gap-1">
-                              <span class={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${difficultyColor}`}>
-                                {getDifficultyText(paper.difficulty)}
-                              </span>
-                              <div class="flex items-center gap-0.5">
-                                <span class="text-xs text-gray-600">{paper.difficulty}/5</span>
-                                <div class="flex gap-0.5">
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <div class={`w-2 h-2 rounded-full ${
-                                      star <= paper.difficulty 
-                                        ? 'bg-yellow-400' 
-                                        : 'bg-gray-200 border border-gray-300'
-                                    }`}></div>
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="flex flex-col sm:flex-row gap-1">
-                          <a
-                            href={paper.downloadUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="inline-flex items-center justify-center rounded bg-primary px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
-                            <svg
-                              class="w-3 h-3 mr-1"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24">
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                              />
-                            </svg>
-                            Download
-                          </a>
-                                                    {paper.videoExplanationUrl && paper.videoExplanationUrl.length > 0 ? (
-                            paper.videoExplanationUrl.length === 1 ? (
-                              <a
-                                href={paper.videoExplanationUrl[0].url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="inline-flex items-center justify-center rounded border border-primary px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
-                                <svg
-                                  class="w-3 h-3 mr-1"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24">
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                  />
-                                </svg>
-                                Video Explanation
-                              </a>
-                            ) : (
-                              <button
-                                class="video-expand-btn inline-flex items-center justify-center rounded border border-primary px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary"
-                                data-paper-id={paper.title}>
-                                <svg
-                                  class="w-3 h-3 mr-1"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24">
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                  />
-                                </svg>
-                                Video Explanation
-                                <span class="ml-1 bg-primary text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                                  {paper.videoExplanationUrl.length}
-                                </span>
-                              </button>
-                            )
-                          ) : (
-                              <div class="relative">
-                                <span class="absolute -top-3 left-0 text-xs text-gray-500 italic">
-                                  Coming Soon
-                                </span>
-                                <button
-                                  disabled
-                                  class="inline-flex items-center justify-center rounded border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-400 cursor-not-allowed">
-                                  <svg
-                                    class="w-3 h-3 mr-1"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                    />
-                                  </svg>
-                                  Video Explanation
-                                </button>
-                              </div>
-                            )}
-                        </div>
-                      </div>
-                      
-                      <!-- Expandable Video Explanations Section -->
-                      {paper.videoExplanationUrl && paper.videoExplanationUrl.length > 1 && (
-                        <div class="video-expand-section hidden mt-2 pt-2 border-t border-gray-100">
-                          <div class="flex flex-wrap gap-1 justify-end">
-                            {paper.videoExplanationUrl.map((video, index) => (
-                              <a
-                                href={video.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="inline-flex items-center justify-center rounded border border-primary px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
-                                <svg
-                                  class="w-3 h-3 mr-1"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24">
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                  />
-                                </svg>
-                                {video.title && video.title.trim() !== "" ? video.title : `Video Explanation ${index + 1}`}
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </div>
-      )
-    }
+    id="exam-papers-container"
+    class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hidden">
+    <!-- Exam papers will be populated by JavaScript -->
   </div>
 </div>
 
@@ -327,83 +100,360 @@ const types = Array.from(
   const state = {
     level: "",
     type: "",
+    examPapers: [],
   };
 
-  // Get all exam paper cards
-  const examPapers = document.querySelectorAll<HTMLElement>("[data-level]");
+  // Utility functions
+  function getDifficultyColor(rating) {
+    if (rating <= 2) return "bg-green-100 text-green-700";
+    if (rating <= 3) return "bg-yellow-100 text-yellow-700";
+    return "bg-red-100 text-red-700";
+  }
+
+  function getDifficultyText(rating) {
+    if (rating <= 2) return "Easy";
+    if (rating <= 3) return "Medium";
+    return "Difficult";
+  }
+
+  // Fetch exam papers from API
+  async function fetchExamPapers() {
+    try {
+      const response = await fetch("/api/exam-papers");
+      if (!response.ok) {
+        throw new Error("Failed to fetch exam papers");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching exam papers:", error);
+      throw error;
+    }
+  }
+
+  // Show/hide UI elements
+  function showElement(id) {
+    document.getElementById(id)?.classList.remove("hidden");
+  }
+
+  function hideElement(id) {
+    document.getElementById(id)?.classList.add("hidden");
+  }
+
+  // Create filter buttons
+  function createFilterButtons(containerId, filters, filterType) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // Add "All" button
+    const allButton = document.createElement("button");
+    allButton.className =
+      "px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary";
+    allButton.setAttribute("data-filter", filterType);
+    allButton.setAttribute("data-value", "");
+    allButton.textContent = filterType === "level" ? "All Levels" : "All Types";
+    container.appendChild(allButton);
+
+    // Add filter buttons
+    filters.forEach((filter) => {
+      const button = document.createElement("button");
+      button.className =
+        "px-2 py-1 rounded border border-gray-200 text-xs font-medium text-gray-700 hover:border-primary hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary";
+      button.setAttribute("data-filter", filterType);
+      button.setAttribute("data-value", filter);
+      button.textContent = filter;
+      container.appendChild(button);
+    });
+  }
+
+  // Create exam paper HTML
+  function createExamPaperHTML(paper) {
+    const difficultyColor = getDifficultyColor(paper.difficulty);
+
+    let videoButtonsHTML = "";
+    if (paper.videoExplanationUrl && paper.videoExplanationUrl.length > 0) {
+      if (paper.videoExplanationUrl.length === 1) {
+        videoButtonsHTML = `
+          <a href="${paper.videoExplanationUrl[0].url}" target="_blank" rel="noopener noreferrer" 
+             class="inline-flex items-center justify-center rounded border border-primary px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            Video Explanation
+          </a>
+        `;
+      } else {
+        videoButtonsHTML = `
+          <button class="video-expand-btn inline-flex items-center justify-center rounded border border-primary px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary" data-paper-id="${paper.title}">
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            Video Explanation
+            <span class="ml-1 bg-primary text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">${paper.videoExplanationUrl.length}</span>
+          </button>
+        `;
+      }
+    } else {
+      videoButtonsHTML = `
+        <div class="relative">
+          <span class="absolute -top-3 left-0 text-xs text-gray-500 italic">Coming Soon</span>
+          <button disabled class="inline-flex items-center justify-center rounded border border-gray-300 px-2 py-1 text-xs font-semibold text-gray-400 cursor-not-allowed">
+            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            Video Explanation
+          </button>
+        </div>
+      `;
+    }
+
+    let expandableVideosHTML = "";
+    if (paper.videoExplanationUrl && paper.videoExplanationUrl.length > 1) {
+      const videoLinks = paper.videoExplanationUrl
+        .map(
+          (video, index) => `
+        <a href="${video.url}" target="_blank" rel="noopener noreferrer" 
+           class="inline-flex items-center justify-center rounded border border-primary px-2 py-1 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
+          <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+          </svg>
+          ${video.title && video.title.trim() !== "" ? video.title : `Video Explanation ${index + 1}`}
+        </a>
+      `,
+        )
+        .join("");
+
+      expandableVideosHTML = `
+        <div class="video-expand-section hidden mt-2 pt-2 border-t border-gray-100">
+          <div class="flex flex-wrap gap-1 justify-end">
+            ${videoLinks}
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="p-2 hover:bg-gray-50 transition-colors duration-200" 
+           data-level="${paper.level}" 
+           data-type="${paper.type}" 
+           data-paper-id="${paper.title}">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm font-semibold text-gray-900">${paper.title}</h3>
+              <div class="flex items-center gap-1">
+                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${difficultyColor}">
+                  ${getDifficultyText(paper.difficulty)}
+                </span>
+                <div class="flex items-center gap-0.5">
+                  <span class="text-xs text-gray-600">${paper.difficulty}/5</span>
+                  <div class="flex gap-0.5">
+                    ${[1, 2, 3, 4, 5]
+                      .map(
+                        (star) => `
+                      <div class="w-2 h-2 rounded-full ${star <= paper.difficulty ? "bg-yellow-400" : "bg-gray-200 border border-gray-300"}"></div>
+                    `,
+                      )
+                      .join("")}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-1">
+            <a href="${paper.downloadUrl}" target="_blank" rel="noopener noreferrer" 
+               class="inline-flex items-center justify-center rounded bg-primary px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              Download
+            </a>
+            ${videoButtonsHTML}
+          </div>
+        </div>
+        ${expandableVideosHTML}
+      </div>
+    `;
+  }
+
+  // Render exam papers
+  function renderExamPapers(examPapers) {
+    if (examPapers.length === 0) {
+      const container = document.getElementById("exam-papers-container");
+      if (container) {
+        container.innerHTML = `
+          <div class="p-4 text-center">
+            <p class="text-gray-500 text-sm">No exam papers available at the moment.</p>
+          </div>
+        `;
+      }
+      return;
+    }
+
+    // Group papers by level
+    const groupedPapers = examPapers.reduce((acc, paper) => {
+      const level = paper.level;
+      if (!acc[level]) {
+        acc[level] = [];
+      }
+      acc[level].push(paper);
+      return acc;
+    }, {});
+
+    // Sort levels (Primary 5 first, then Primary 4)
+    const sortedLevels = Object.keys(groupedPapers).sort((a, b) => {
+      if (a.includes("5") && b.includes("4")) return -1;
+      if (a.includes("4") && b.includes("5")) return 1;
+      return a.localeCompare(b);
+    });
+
+    let html = "";
+    sortedLevels.forEach((level) => {
+      html += `
+        <div class="border-b border-gray-100 last:border-b-0">
+          <div class="bg-gray-50 px-2 py-1 border-b border-gray-100">
+            <h2 class="text-sm font-semibold text-gray-900">${level}</h2>
+          </div>
+          <div class="divide-y divide-gray-100">
+            ${groupedPapers[level].map((paper) => createExamPaperHTML(paper)).join("")}
+          </div>
+        </div>
+      `;
+    });
+
+    const container = document.getElementById("exam-papers-container");
+    if (container) {
+      container.innerHTML = html;
+    }
+  }
 
   // Filter function
   function filterPapers() {
+    const examPapers = document.querySelectorAll("[data-level]");
     examPapers.forEach((paper) => {
-      const matchesLevel = !state.level || paper.dataset.level === state.level;
-      const matchesType = !state.type || paper.dataset.type === state.type;
+      const paperElement = paper as HTMLElement;
+      const matchesLevel =
+        !state.level || paperElement.dataset.level === state.level;
+      const matchesType =
+        !state.type || paperElement.dataset.type === state.type;
 
       if (matchesLevel && matchesType) {
-        paper.style.display = "block";
+        paperElement.style.display = "block";
       } else {
-        paper.style.display = "none";
+        paperElement.style.display = "none";
       }
     });
   }
 
-  // Add event listeners to all filter buttons
-  document
-    .querySelectorAll<HTMLButtonElement>("[data-filter]")
-    .forEach((button) => {
-      button.addEventListener("click", (e) => {
-        const target = e.target as HTMLButtonElement;
+  // Initialize the component
+  async function init() {
+    try {
+      // Fetch exam papers
+      const examPapers = await fetchExamPapers();
+      state.examPapers = examPapers;
+
+      // Hide loading state
+      hideElement("loading-state");
+
+      // Show content
+      showElement("filters-section");
+      showElement("exam-papers-container");
+
+      // Get unique values for filters
+      const levels = Array.from(
+        new Set(examPapers.map((paper) => paper.level)),
+      ).sort();
+      const types = Array.from(
+        new Set(examPapers.map((paper) => paper.type)),
+      ).sort();
+
+      // Create filter buttons
+      createFilterButtons("level-filters", levels, "level");
+      createFilterButtons("type-filters", types, "type");
+
+      // Render exam papers
+      renderExamPapers(examPapers);
+
+      // Add event listeners to filter buttons
+      document.querySelectorAll("[data-filter]").forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const target = e.target as HTMLElement;
+          if (!target) return;
+
+          const filterType = target.dataset.filter;
+          const filterValue = target.dataset.value;
+          if (!filterType) return;
+
+          // Update active state
+          document
+            .querySelectorAll(`[data-filter="${filterType}"]`)
+            .forEach((btn) => {
+              const btnElement = btn as HTMLElement;
+              btnElement.classList.remove("border-primary", "text-primary");
+              btnElement.classList.add("border-gray-200", "text-gray-700");
+            });
+          target.classList.remove("border-gray-200", "text-gray-700");
+          target.classList.add("border-primary", "text-primary");
+
+          state[filterType] = filterValue || "";
+          filterPapers();
+        });
+      });
+
+      // Add video expansion functionality
+      document.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
         if (!target) return;
 
-        const filterType = target.dataset.filter;
-        const filterValue = target.dataset.value;
-        if (!filterType) return;
+        if (target.closest(".video-expand-btn")) {
+          const button = target.closest(".video-expand-btn") as HTMLElement;
+          const paperId = button.getAttribute("data-paper-id");
+          const paperElement = document.querySelector(
+            `[data-paper-id="${paperId}"]`,
+          ) as HTMLElement;
 
-        // Update active state
-        document
-          .querySelectorAll(`[data-filter="${filterType}"]`)
-          .forEach((btn) => {
-            btn.classList.remove("border-primary", "text-primary");
-            btn.classList.add("border-gray-200", "text-gray-700");
-          });
-        target.classList.remove("border-gray-200", "text-gray-700");
-        target.classList.add("border-primary", "text-primary");
+          if (paperElement) {
+            const expandSection = paperElement.querySelector(
+              ".video-expand-section",
+            ) as HTMLElement;
 
-        state[filterType] = filterValue || "";
-        filterPapers();
-      });
-    });
+            if (expandSection) {
+              const isHidden = expandSection.classList.contains("hidden");
 
-  // Initial filter
-  filterPapers();
+              // Close all other expanded sections
+              document
+                .querySelectorAll(".video-expand-section")
+                .forEach((section) => {
+                  const sectionElement = section as HTMLElement;
+                  sectionElement.classList.add("hidden");
+                });
 
-  // Video expansion functionality
-  document.querySelectorAll('.video-expand-btn').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      const buttonElement = target.closest('.video-expand-btn') as HTMLElement;
-      
-      if (buttonElement) {
-        const paperId = buttonElement.getAttribute('data-paper-id');
-        const paperElement = document.querySelector(`[data-paper-id="${paperId}"]`) as HTMLElement;
-        
-        if (paperElement) {
-          const expandSection = paperElement.querySelector('.video-expand-section') as HTMLElement;
-          
-          if (expandSection) {
-            const isHidden = expandSection.classList.contains('hidden');
-            
-            // Close all other expanded sections
-            document.querySelectorAll('.video-expand-section').forEach((section) => {
-              section.classList.add('hidden');
-            });
-            
-            // Toggle current section
-            if (isHidden) {
-              expandSection.classList.remove('hidden');
+              // Toggle current section
+              if (isHidden) {
+                expandSection.classList.remove("hidden");
+              }
             }
           }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error initializing exam papers:", error);
+      hideElement("loading-state");
+      showElement("error-state");
+    }
+  }
+
+  // Retry functionality
+  document.getElementById("retry-btn")?.addEventListener("click", () => {
+    hideElement("error-state");
+    showElement("loading-state");
+    init();
   });
+
+  // Initialize when DOM is loaded
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
 </script>
