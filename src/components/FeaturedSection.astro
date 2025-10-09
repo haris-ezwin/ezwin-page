@@ -1,32 +1,45 @@
 ---
+import { Image } from "astro:assets";
+
 const courses = [
   {
     badge: "It's Free",
     badgeColor: "bg-primary",
     title: "Free PSLE 10 Years Series",
     buttonText: "Get It Now",
-    buttonColor: "bg-primary hover:bg-blue-800"
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/10-year-series.webp"
   },
   {
     badge: "Coming Soon",
     badgeColor: "bg-primary",
     title: "Personalised Roadmap to Improve the Grades",
     buttonText: "Learn More",
-    buttonColor: "bg-primary hover:bg-blue-800"
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/roadmap.webp"
   },
   {
     badge: "It's Free",
     badgeColor: "bg-primary",
     title: "Free 1 Month Trial Lesson",
     buttonText: "Claim Your Trial",
-    buttonColor: "bg-primary hover:bg-blue-800"
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/teaching-student.webp"
+  },
+  {
+    badge: "It's Free",
+    badgeColor: "bg-primary",
+    title: "Free Past Year Exam Papers",
+    buttonText: "Get It Now",
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/looking-over.webp"
   }
 ];
 ---
 
 <div class="py-16 sm:py-24 bg-background">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
       {courses.map((course) => (
         <div class="flex flex-col items-center">
           {/* Badge */}
@@ -41,14 +54,13 @@ const courses = [
             {course.title}
           </h3>
 
-          {/* Placeholder Image */}
-          <div class="w-full aspect-square max-w-sm mb-8 bg-gray-200 rounded-lg flex items-center justify-center">
-            <div class="text-center p-8">
-              <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p class="mt-2 text-sm text-gray-500">Placeholder Image</p>
-            </div>
+          {/* Image */}
+          <div class="w-full aspect-square max-w-sm mb-8 rounded-lg overflow-hidden">
+            <img
+              src={course.image}
+              alt={course.title}
+              class="w-full h-full object-cover"
+            />
           </div>
 
           {/* Button */}
