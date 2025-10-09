@@ -11,14 +11,6 @@ const courses = [
     image: "/items/10-year-series.webp"
   },
   {
-    badge: "Coming Soon",
-    badgeColor: "bg-primary",
-    title: "Personalised Roadmap to Improve the Grades",
-    buttonText: "Learn More",
-    buttonColor: "bg-primary hover:bg-blue-800",
-    image: "/items/roadmap.webp"
-  },
-  {
     badge: "It's Free",
     badgeColor: "bg-primary",
     title: "Free 1 Month Trial Lesson",
@@ -39,7 +31,7 @@ const courses = [
 
 <div class="py-16 sm:py-24 bg-background">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
       {courses.map((course) => (
         <div class="flex flex-col items-center">
           {/* Badge */}
@@ -50,7 +42,7 @@ const courses = [
           </div>
 
           {/* Title */}
-          <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
+          <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center h-24 flex items-center justify-center">
             {course.title}
           </h3>
 
