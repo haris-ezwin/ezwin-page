@@ -3,19 +3,36 @@ import { Image } from "astro:assets";
 import Link from "@components/ui/link.astro";
 ---
 
-<main class="relative bg-background py-12 md:py-16 overflow-hidden">
+<main class="relative bg-background py-8 md:py-12 overflow-hidden">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <div class="text-center">
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 uppercase">
-        Do you give endless exam papers, yet marks stay the same?
-      </h1>
-      <p class="text-lg md:text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
-        Discover exactly which question types your child struggles with — and fix them through targeted practice, not endless papers.
-      </p>
-      <div class="flex justify-center">
-        <Link href="#contact-form" style="primary" class="bg-primary hover:bg-primary/90 text-white px-12 py-4 rounded-full text-lg font-semibold uppercase">
-          Learn how to improve your child's marks
-        </Link>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      <!-- Left Content -->
+      <div class="text-left">
+        <div class="mb-4">
+          <span class="bg-primary text-white px-4 py-1 rounded-full text-sm font-semibold">
+            Dear Parents
+          </span>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 uppercase">
+          Do you give endless math exam papers, yet marks stay the same?
+        </h1>
+        <p class="text-lg md:text-xl text-gray-700 mb-8">
+          Discover exactly which question types your child struggles with — and fix them through targeted practice, not endless papers.
+        </p>
+        <div>
+          <Link href="#contact-form" style="primary" class="bg-primary hover:bg-primary/90 text-white px-12 py-4 rounded-full text-lg font-semibold uppercase">
+            Learn how to improve your child's marks
+          </Link>
+        </div>
+      </div>
+
+      <!-- Right Image -->
+      <div class="flex justify-center lg:justify-end">
+        <img
+          src="/items/hero-image.webp"
+          alt="Hero Image"
+          class="w-full max-w-md lg:max-w-lg rounded-lg"
+        />
       </div>
     </div>
   </div>
