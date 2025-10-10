@@ -1,0 +1,142 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import TuitionClassesPopup from "@components/TuitionClassesPopup.astro";
+---
+
+<Layout title="Tuition">
+  <Container>
+    <div class="py-16 md:py-24">
+      <!-- Hero Section -->
+      <div class="mx-auto max-w-4xl text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          Stop Wasting Time on Endless Practice Papers
+        </h1>
+        <p class="text-xl text-gray-700 mb-8">
+          Discover exactly which question types your child struggles with — and fix them through targeted practice, not endless papers.
+        </p>
+        <button
+          onclick="openTuitionClassesPopup()"
+          class="bg-primary hover:bg-blue-800 text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200">
+          Get 1 Month Free Trial
+        </button>
+      </div>
+
+      <!-- The Problem Section -->
+      <div class="mx-auto max-w-4xl mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+          The Problem with Traditional Math Practice
+        </h2>
+        <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8">
+          <p class="text-lg text-gray-700 mb-4">
+            Most parents give their children stack after stack of exam papers, hoping more practice will lead to better grades.
+          </p>
+          <p class="text-lg text-gray-700">
+            But here's the truth: <strong>more practice doesn't help if your child keeps practicing the wrong way.</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- The Solution Section -->
+      <div class="mx-auto max-w-4xl mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+          Our Targeted Approach
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-4xl mb-4">📊</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">1. Identify Weaknesses</h3>
+            <p class="text-gray-700">
+              We analyze your child's performance to pinpoint exactly which question types they struggle with.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-4xl mb-4">🎯</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">2. Targeted Practice</h3>
+            <p class="text-gray-700">
+              Focus only on the areas that need improvement, making every practice session count.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-4xl mb-4">📈</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">3. See Results</h3>
+            <p class="text-gray-700">
+              Watch your child's confidence and grades improve as they master previously difficult concepts.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- What You Get Section -->
+      <div class="mx-auto max-w-4xl mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+          What You Get with Our Tuition Program
+        </h2>
+        <div class="bg-blue-50 rounded-lg p-8">
+          <ul class="space-y-4">
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span class="text-lg text-gray-700">
+                <strong>Experienced tutors</strong> from top schools who understand the curriculum inside out
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span class="text-lg text-gray-700">
+                <strong>Personalized learning plans</strong> tailored to your child's specific weaknesses
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span class="text-lg text-gray-700">
+                <strong>Targeted practice materials</strong> focusing on problem areas, not random questions
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span class="text-lg text-gray-700">
+                <strong>Regular progress tracking</strong> so you can see exactly how your child is improving
+              </span>
+            </li>
+            <li class="flex items-start">
+              <svg class="w-6 h-6 text-primary mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <span class="text-lg text-gray-700">
+                <strong>Small class sizes</strong> ensuring every student gets individual attention
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="mx-auto max-w-4xl text-center bg-primary text-white rounded-lg p-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">
+          Ready to See Real Improvement?
+        </h2>
+        <p class="text-xl mb-8">
+          Get 1 month of free tuition classes for Primary 4, 5, and 6 students.
+        </p>
+        <button
+          onclick="openTuitionClassesPopup()"
+          class="bg-white text-primary hover:bg-gray-100 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200">
+          Claim Your Free Month Now
+        </button>
+        <p class="text-sm mt-4 opacity-90">
+          No credit card required. Limited spots available.
+        </p>
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<TuitionClassesPopup />

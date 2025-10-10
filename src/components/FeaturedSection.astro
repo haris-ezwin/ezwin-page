@@ -16,7 +16,7 @@ const courses = [
   {
     badge: "It's Free",
     badgeColor: "bg-primary",
-    title: "Free 1 Month Tuition Classes",
+    title: "Free 1 Month Tuition Online Classes",
     buttonText: "Claim Your Trial",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/teaching-student.webp",
@@ -71,7 +71,13 @@ const courses = [
               </a>
             ) : (
               <button
-                onclick={course.title === "Free Math PSLE 10 Years Series" ? "openPSLESeriesPopup()" : course.title === "Free 1 Month Tuition Classes" ? "openTuitionClassesPopup()" : ""}
+                onclick={
+                  course.title === "Free Math PSLE 10 Years Series"
+                    ? "openPSLESeriesPopup()"
+                    : course.title === "Free 1 Month Tuition Classes"
+                      ? "openTuitionClassesPopup()"
+                      : ""
+                }
                 class={`${course.buttonColor} text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200 w-full max-w-xs`}>
                 {course.buttonText}
               </button>

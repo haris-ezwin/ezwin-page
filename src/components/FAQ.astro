@@ -1,0 +1,94 @@
+---
+const faqs = [
+  {
+    question: "Are the classes conducted online or in-person?",
+    answer:
+      "All of our tuition classes are conducted online via video conferencing, ensuring your child can learn from the comfort and safety of home with full interaction and engagement.",
+  },
+  {
+    question: "How does the 1 Month Free Tuition work?",
+    answer:
+      "Sign up and your child gets one full month of quality math tuition classes at no cost. This gives you the opportunity to experience our teaching methods and see real improvements in your child's understanding.",
+  },
+  {
+    question: "What levels do you cater to?",
+    answer:
+      "We specialize in Primary 4, Primary 5, and Primary 6 Math. Our programs are specifically designed to help students master the Singapore Math curriculum and excel in their exams.",
+  },
+  {
+    question: "What makes your tuition different?",
+    answer:
+      "We focus on identifying specific question types your child struggles with and provide targeted practice, rather than just giving endless papers. This personalized approach leads to faster and more effective improvement.",
+  },
+];
+---
+
+<div class="py-16 sm:py-24 bg-white">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-4xl">
+      <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
+        Frequently Asked Questions
+      </h2>
+      <p class="text-center text-gray-600 mb-12">
+        Everything you need to know about our programs
+      </p>
+
+      <div class="space-y-4">
+        {
+          faqs.map((faq, index) => (
+            <div class="border border-gray-200 rounded-lg">
+              <button
+                type="button"
+                class="faq-button w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                data-faq-index={index}>
+                <span class="font-semibold text-gray-900 pr-8">
+                  {faq.question}
+                </span>
+                <svg
+                  class="faq-icon w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              <div class="faq-answer hidden px-6 pb-4">
+                <p class="text-gray-600">{faq.answer}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // FAQ accordion functionality
+  document.querySelectorAll(".faq-button").forEach((button) => {
+    button.addEventListener("click", function () {
+      const answer = this.nextElementSibling;
+      const icon = this.querySelector(".faq-icon");
+      const isOpen = !answer?.classList.contains("hidden");
+
+      // Close all other FAQs
+      document.querySelectorAll(".faq-answer").forEach((ans) => {
+        ans.classList.add("hidden");
+      });
+      document.querySelectorAll(".faq-icon").forEach((ic) => {
+        ic.classList.remove("rotate-180");
+      });
+
+      // Toggle current FAQ
+      if (!isOpen) {
+        answer?.classList.remove("hidden");
+        icon?.classList.add("rotate-180");
+      }
+    });
+  });
+</script>
