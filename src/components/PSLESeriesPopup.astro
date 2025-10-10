@@ -1,28 +1,44 @@
 ---
+
 ---
 
-<div id="psle-series-popup" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+<div
+  id="psle-series-popup"
+  class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
   <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
     <!-- Close Button -->
     <button
       class="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-      onclick="document.getElementById('psle-series-popup').classList.add('hidden'); document.getElementById('psle-series-popup').classList.remove('flex');"
-    >
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      onclick="document.getElementById('psle-series-popup').classList.add('hidden'); document.getElementById('psle-series-popup').classList.remove('flex');">
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"></path>
       </svg>
     </button>
 
     <!-- Form Header -->
     <div class="mb-6">
-      <h2 class="text-2xl font-bold text-gray-900 mb-2">Get Your Free PSLE 10 Years Series</h2>
-      <p class="text-gray-600 text-sm">Fill in your details and we'll send it to you right away!</p>
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">
+        Get Your Free PSLE 10 Years Series
+      </h2>
+      <p class="text-gray-600 text-sm">
+        Fill in your details and we'll send it to you right away!
+      </p>
     </div>
 
     <!-- Form -->
     <form class="space-y-4" id="psle-series-form">
       <div>
-        <label for="psle-name" class="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          for="psle-name"
+          class="block text-sm font-medium text-gray-700 mb-1">
           Name *
         </label>
         <input
@@ -36,7 +52,9 @@
       </div>
 
       <div>
-        <label for="psle-email" class="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          for="psle-email"
+          class="block text-sm font-medium text-gray-700 mb-1">
           Email *
         </label>
         <input
@@ -50,7 +68,9 @@
       </div>
 
       <div>
-        <label for="psle-phone" class="block text-sm font-medium text-gray-700 mb-1">
+        <label
+          for="psle-phone"
+          class="block text-sm font-medium text-gray-700 mb-1">
           Phone Number *
         </label>
         <input
@@ -65,8 +85,7 @@
 
       <button
         type="submit"
-        class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200"
-      >
+        class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors duration-200">
         Get Free PSLE Series
       </button>
     </form>
@@ -75,35 +94,61 @@
 
 <script>
   // Open popup function
-  window.openPSLESeriesPopup = function() {
-    document.getElementById('psle-series-popup').classList.remove('hidden');
-    document.getElementById('psle-series-popup').classList.add('flex');
+  window.openPSLESeriesPopup = function () {
+    document.getElementById("psle-series-popup").classList.remove("hidden");
+    document.getElementById("psle-series-popup").classList.add("flex");
   };
 
   // Close on outside click
-  document.getElementById('psle-series-popup').addEventListener('click', function(e) {
-    if (e.target === this) {
-      this.classList.add('hidden');
-      this.classList.remove('flex');
-    }
-  });
+  document
+    .getElementById("psle-series-popup")
+    .addEventListener("click", function (e) {
+      if (e.target === this) {
+        this.classList.add("hidden");
+        this.classList.remove("flex");
+      }
+    });
 
   // Handle form submission
-  document.getElementById('psle-series-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+  const form = document.getElementById("psle-series-form") as HTMLFormElement;
+  if (form) {
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      console.log("Form submitted");
 
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData);
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData);
 
-    // TODO: Add your form submission logic here (e.g., send to backend API)
-    console.log('PSLE Series Form submitted:', data);
+      try {
+        // Send data to webhook
+        await fetch(
+          "https://n8n.ezwin.academy/webhook-test/cb40cc05-3519-4f51-b771-e8de61012b47",
+          {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          },
+        );
 
-    // Show success message
-    alert('Thank you! We will send the PSLE 10 Years Series to your email shortly.');
+        // With no-cors mode, we can't read the response, but the request is sent
+        // Show success message
+        alert(
+          "Thank you! We will send the PSLE 10 Years Series to your email shortly.",
+        );
 
-    // Close popup and reset form
-    document.getElementById('psle-series-popup').classList.add('hidden');
-    document.getElementById('psle-series-popup').classList.remove('flex');
-    this.reset();
-  });
+        // Close popup and reset form
+        document.getElementById("psle-series-popup")?.classList.add("hidden");
+        document
+          .getElementById("psle-series-popup")
+          ?.classList.remove("flex");
+        this.reset();
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        alert("There was an error submitting your request. Please try again.");
+      }
+    });
+  }
 </script>
