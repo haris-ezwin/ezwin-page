@@ -1,0 +1,75 @@
+---
+const faqs = [
+  {
+    question: "What actually happens during the classes?",
+    answer: [
+      "Every session is live on Zoom with a small group of students. Lessons are capped so tutors can call on each child and spot misconceptions on the spot.",
+      "We begin by reviewing the previous week's targeted homework, then break concepts down into simple, high leverage strategies.",
+      "Students work through curated questions that mirror the exact formats they find challenging. Tutors demonstrate solutions, pause for checks, and give immediate feedback so your child knows exactly what to adjust.",
+    ],
+  },
+  {
+    question: "How does the 1 month free tuition work?",
+    answer: [
+      "Book a slot for your child and they join our classes for four full weeks at no cost. You get the same timetable, resources, and support as paying families.",
+      "During this period we track performance, send weekly progress recaps, and show you how the targeted drills close specific gaps.",
+      "If you're happy with the results after the trial, simply keep the spot. There are no hidden fees or obligations if you decide it's not the right fit.",
+    ],
+  },
+  {
+    question: "How much does the tuition cost?",
+    answer: [
+      "Tuition is $200 per month after your free trial ends.",
+      "We only request payment details once you confirm you want to continue.",
+      "When you stay on, we charge your card each month and you can cancel anytime before the next billing cycle.",
+    ],
+  },
+  {
+    question: "What levels do you cater to?",
+    answer: [
+      "We specialise in Primary 4 to Primary 6 Mathematics within the Singapore syllabus.",
+      "Lessons are streamed by ability so your child practises at the right level of difficulty without feeling lost or bored.",
+      "For PSLE students we run exam clinics closer to the national papers to lock in speed, accuracy, and confidence.",
+    ],
+  },
+  {
+    question: "Who are the tutors and how are classes run?",
+    answer: [
+      "Classes are led by experienced tutors from top MOE schools who know the curriculum inside-out.",
+      "Every tutor follows our proprietary lesson playbooks – from concept breakdowns to the exact diagnostic questions they ask to surface misconceptions.",
+      "Parents receive concise summaries after each class so you always know what was covered and what's next.",
+    ],
+  },
+  {
+    question: "Who is this for?",
+    answer: [
+      "Families who want a structured, data-driven way to close specific math gaps without piling on endless worksheets.",
+      "Students who are currently in Primary 4 to Primary 6 and are willing to show up for weekly live classes and targeted homework.",
+      "Parents who value transparency and want regular updates on the exact concepts their child has mastered and what still needs work.",
+    ],
+  },
+];
+---
+
+<section class="py-16 md:py-24">
+  <div class="mx-auto max-w-5xl px-6 lg:px-8">
+    <div class="space-y-10">
+      {
+        faqs.map((faq) => (
+          <div class="rounded-3xl">
+            <div class="bg-primary text-white rounded-3xl px-8 py-6">
+              <h3 class="font-semibold text-lg md:text-xl leading-snug">
+                {faq.question}
+              </h3>
+            </div>
+            <div class="px-8 pb-8 pt-6 md:pt-8 text-base md:text-lg leading-relaxed text-gray-700">
+              {faq.answer.map((paragraph) => (
+                <p class="mb-4 last:mb-0">{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

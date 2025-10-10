@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 import TuitionClassesPopup from "@components/TuitionClassesPopup.astro";
+import TuitionFAQ from "@components/TuitionFAQ.astro";
 ---
 
 <Layout title="Tuition">
@@ -118,22 +119,16 @@ import TuitionClassesPopup from "@components/TuitionClassesPopup.astro";
         </div>
       </div>
 
+      <!-- FAQ Section -->
+      <TuitionFAQ />
+
       <!-- CTA Section -->
-      <div class="mx-auto max-w-4xl text-center bg-primary text-white rounded-lg p-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">
-          Ready to See Real Improvement?
-        </h2>
-        <p class="text-xl mb-8">
-          Get 1 month of free tuition classes for Primary 4, 5, and 6 students.
-        </p>
+      <div class="mx-auto max-w-4xl text-center">
         <button
           onclick="openTuitionClassesPopup()"
-          class="bg-white text-primary hover:bg-gray-100 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200">
+          class="bg-primary text-white hover:bg-blue-800 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200">
           Claim Your Free Month Now
         </button>
-        <p class="text-sm mt-4 opacity-90">
-          No credit card required. Limited spots available.
-        </p>
       </div>
     </div>
   </Container>
