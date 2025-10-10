@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import PSLESeriesPopup from "./PSLESeriesPopup.astro";
 
 const courses = [
   {
@@ -9,6 +10,7 @@ const courses = [
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/10-year-series.webp",
+    link: null,
   },
   {
     badge: "It's Free",
@@ -17,6 +19,7 @@ const courses = [
     buttonText: "Claim Your Trial",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/teaching-student.webp",
+    link: null,
   },
   {
     badge: "It's Free",
@@ -25,6 +28,7 @@ const courses = [
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/looking-over.webp",
+    link: "/free-exam-papers",
   },
 ];
 ---
@@ -58,13 +62,24 @@ const courses = [
             </div>
 
             {/* Button */}
-            <button
-              class={`${course.buttonColor} text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200 w-full max-w-xs`}>
-              {course.buttonText}
-            </button>
+            {course.link ? (
+              <a
+                href={course.link}
+                class={`${course.buttonColor} text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200 w-full max-w-xs text-center block`}>
+                {course.buttonText}
+              </a>
+            ) : (
+              <button
+                onclick={course.title === "Free Math PSLE 10 Years Series" ? "openPSLESeriesPopup()" : ""}
+                class={`${course.buttonColor} text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200 w-full max-w-xs`}>
+                {course.buttonText}
+              </button>
+            )}
           </div>
         ))
       }
     </div>
   </div>
 </div>
+
+<PSLESeriesPopup />

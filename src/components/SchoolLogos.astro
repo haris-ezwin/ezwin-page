@@ -1,8 +1,8 @@
 ---
 // Get all school logos
 // Get number of files in school-logos directory
-const schoolLogos = await Astro.glob("/public/school-logos/*.png");
-const numLogos = schoolLogos.length;
+const schoolLogos = import.meta.glob("/public/school-logos/*.png");
+const numLogos = Object.keys(schoolLogos).length;
 
 // Create array from 1 to number of logos
 const logoNumbers = Array.from({ length: numLogos }, (_, i) => String(i + 1));

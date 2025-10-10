@@ -7,6 +7,11 @@ import { getCurrentOffer } from "@utils/offer.js";
 
 const menuitems = [
   {
+    title: "Free Math PSLE 10 Year Series",
+    path: "#psle-series",
+    onclick: "openPSLESeriesPopup()",
+  },
+  {
     title: "Free Tuition Class",
     path: "#free-tuition-class",
   },
@@ -76,6 +81,7 @@ const showOffer = daysRemaining > 0;
                     <li>
                       <a
                         href={item.path}
+                        onclick={item.onclick}
                         class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900">
                         <span> {item.title}</span>
                       </a>
