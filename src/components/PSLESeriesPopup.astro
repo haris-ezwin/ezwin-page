@@ -117,12 +117,15 @@
       console.log("Form submitted");
 
       const formData = new FormData(this);
-      const data = Object.fromEntries(formData);
+      const data = {
+        ...Object.fromEntries(formData),
+        tag: "psle-10-years-series",
+      };
 
       try {
         // Send data to webhook
         await fetch(
-          "https://n8n.ezwin.academy/webhook-test/cb40cc05-3519-4f51-b771-e8de61012b47",
+          "https://n8n.ezwin.academy/webhook/cb40cc05-3519-4f51-b771-e8de61012b47",
           {
             method: "POST",
             mode: "no-cors",
@@ -141,9 +144,7 @@
 
         // Close popup and reset form
         document.getElementById("psle-series-popup")?.classList.add("hidden");
-        document
-          .getElementById("psle-series-popup")
-          ?.classList.remove("flex");
+        document.getElementById("psle-series-popup")?.classList.remove("flex");
         this.reset();
       } catch (error) {
         console.error("Error submitting form:", error);
