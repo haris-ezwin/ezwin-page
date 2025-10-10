@@ -24,12 +24,25 @@
     </button>
 
     <!-- Form Header -->
-    <div class="mb-6">
+    <div class="mb-6" id="form-header">
       <h2 class="text-2xl font-bold text-gray-900 mb-2">
         Get Your Free PSLE 10 Years Series
       </h2>
       <p class="text-gray-600 text-sm">
         Fill in your details and we'll send it to you right away!
+      </p>
+    </div>
+
+    <!-- Success Message (hidden by default) -->
+    <div class="hidden text-center py-8" id="success-message">
+      <div class="mb-4">
+        <svg class="w-16 h-16 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-3">Thank You!</h3>
+      <p class="text-gray-600 text-base">
+        We will send the PSLE 10 Year Series through WhatsApp and Email shortly.
       </p>
     </div>
 
@@ -123,29 +136,45 @@
       };
 
       try {
+        // Determine webhook URL based on environment
+        const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const webhookUrl = isLocalhost
+          ? "https://n8n.ezwin.academy/webhook-test/cb40cc05-3519-4f51-b771-e8de61012b47"
+          : "https://n8n.ezwin.academy/webhook/cb40cc05-3519-4f51-b771-e8de61012b47";
+
         // Send data to webhook
-        await fetch(
-          "https://n8n.ezwin.academy/webhook/cb40cc05-3519-4f51-b771-e8de61012b47",
-          {
-            method: "POST",
-            mode: "no-cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
+        await fetch(webhookUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify(data),
+        });
 
         // With no-cors mode, we can't read the response, but the request is sent
-        // Show success message
-        alert(
-          "Thank you! We will send the PSLE 10 Years Series to your email shortly.",
-        );
+        // Hide form and header, show success message
+        const formHeader = document.getElementById("form-header");
+        const successMessage = document.getElementById("success-message");
+        const form = document.getElementById("psle-series-form");
 
-        // Close popup and reset form
-        document.getElementById("psle-series-popup")?.classList.add("hidden");
-        document.getElementById("psle-series-popup")?.classList.remove("flex");
+        if (formHeader) formHeader.classList.add("hidden");
+        if (form) form.classList.add("hidden");
+        if (successMessage) successMessage.classList.remove("hidden");
+
+        // Reset form
         this.reset();
+
+        // Auto-close popup after 3 seconds
+        setTimeout(() => {
+          document.getElementById("psle-series-popup")?.classList.add("hidden");
+          document.getElementById("psle-series-popup")?.classList.remove("flex");
+
+          // Reset UI for next time
+          if (formHeader) formHeader.classList.remove("hidden");
+          if (form) form.classList.remove("hidden");
+          if (successMessage) successMessage.classList.add("hidden");
+        }, 3000);
       } catch (error) {
         console.error("Error submitting form:", error);
         alert("There was an error submitting your request. Please try again.");

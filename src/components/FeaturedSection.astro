@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import PSLESeriesPopup from "./PSLESeriesPopup.astro";
+import TuitionClassesPopup from "./TuitionClassesPopup.astro";
 
 const courses = [
   {
@@ -70,7 +71,7 @@ const courses = [
               </a>
             ) : (
               <button
-                onclick={course.title === "Free Math PSLE 10 Years Series" ? "openPSLESeriesPopup()" : ""}
+                onclick={course.title === "Free Math PSLE 10 Years Series" ? "openPSLESeriesPopup()" : course.title === "Free 1 Month Tuition Classes" ? "openTuitionClassesPopup()" : ""}
                 class={`${course.buttonColor} text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200 w-full max-w-xs`}>
                 {course.buttonText}
               </button>
@@ -83,3 +84,4 @@ const courses = [
 </div>
 
 <PSLESeriesPopup />
+<TuitionClassesPopup />
