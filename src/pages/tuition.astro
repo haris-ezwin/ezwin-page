@@ -1,0 +1,100 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Container from "@components/container.astro";
+import TuitionClassesPopup from "@components/TuitionClassesPopup.astro";
+import TuitionFAQ from "@components/TuitionFAQ.astro";
+---
+
+<Layout title="Tuition">
+  <Container>
+    <div class="py-16 md:py-24">
+      <!-- Hero Section -->
+      <div class="mx-auto max-w-4xl text-center mb-16">
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          Stop Wasting Time on Endless Practice Papers
+        </h1>
+        <p class="text-xl text-gray-700 mb-8">
+          Discover exactly which question types your child struggles with — and
+          fix them through targeted practice, not endless papers.
+        </p>
+        <button
+          onclick="openTuitionClassesPopup()"
+          class="bg-primary hover:bg-blue-800 text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200">
+          I'm Ready to Improve My Child's Marks
+        </button>
+      </div>
+
+      <!-- The Problem Section -->
+      <div class="mx-auto max-w-4xl mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+          The Problem with Traditional Math Practice
+        </h2>
+        <div class="bg-red-50 border-l-4 border-red-500 p-6 mb-8">
+          <p class="text-lg text-gray-700 mb-4">
+            Most parents give their children stack after stack of exam papers,
+            hoping more practice will lead to better grades.
+          </p>
+          <p class="text-lg text-gray-700">
+            But here's the truth: <strong
+              >more practice doesn't help if your child keeps practicing the
+              wrong way.</strong
+            >
+          </p>
+        </div>
+      </div>
+
+      <!-- The Solution Section -->
+      <div class="mx-auto max-w-4xl mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+          Our Targeted Approach
+        </h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-4xl mb-4">📊</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+              1. Identify Weaknesses
+            </h3>
+            <p class="text-gray-700">
+              We analyze your child's performance to pinpoint exactly which
+              question types they struggle with.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-4xl mb-4">🎯</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">
+              2. Targeted Practice
+            </h3>
+            <p class="text-gray-700">
+              Focus only on the areas that need improvement, making every
+              practice session count.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="text-4xl mb-4">📈</div>
+            <h3 class="text-xl font-bold text-gray-900 mb-3">3. Progress*</h3>
+            <p class="text-gray-700">
+              With this practice, this gives progress to improving your child's weaknesses and they may eventually be able to answer them confidently.
+            </p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 mt-6 text-center italic">
+          *Every student is unique and has a different learning speed. Therefore, progress may vary.
+        </p>
+      </div>
+
+      <!-- FAQ Section -->
+      <TuitionFAQ />
+
+      <!-- CTA Section -->
+      <div class="mx-auto max-w-4xl text-center">
+        <button
+          onclick="openTuitionClassesPopup()"
+          class="bg-primary text-white hover:bg-blue-800 px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200">
+          I'm Ready to Improve My Child's Marks
+        </button>
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<TuitionClassesPopup />

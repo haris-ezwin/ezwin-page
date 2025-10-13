@@ -1,97 +1,39 @@
 ---
 import { Image } from "astro:assets";
 import Link from "@components/ui/link.astro";
-
-const testimonials = [
-  {
-    id: 1,
-    quote: "You are the best teacher I ever have!",
-    author: "Aira, P4 Student",
-    date: "April 2025",
-  },
-  {
-    id: 2,
-    quote:
-      "Aira really enjoys ur lessons and specifically say she wants you to be her permanent teacher. 😂",
-    author: "Mdm Kamilah, Parent of Aira",
-    date: "April 2025",
-  },
-];
 ---
 
-<main class="grid lg:grid-cols-2 place-items-center pt-16 pb-8 md:pt-2 md:pb-2">
-  <div>
-    <h1
-      class="text-5xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
-      Free Tuition for the whole year of 2025!*
-    </h1>
-    <span class="text-sm italic">* applicable to P6 Maths students.</span>
-    <p class="text-lg mt-4 text-slate-600 max-w-xl">
-      Worth up to $2400, with 10 Year Series, Mock Exam Papers and Free Lessons.
-    </p>
-    <div class="mt-6">
-      <Link href="#contact-form" style="primary" class="bg-primary">
-        Try for free!
-      </Link>
-    </div>
+<main class="relative bg-background py-8 md:py-12 overflow-hidden">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+      <!-- Left Content -->
+      <div class="text-left">
+        <div class="mb-4">
+          <span class="bg-primary text-white px-4 py-1 rounded-full text-sm font-semibold">
+            Dear Parents
+          </span>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 uppercase">
+          Do you give endless math exam papers, yet marks stay the same?
+        </h1>
+        <p class="text-lg md:text-xl text-gray-700 mb-8">
+          Discover exactly which question types your child struggles with — and fix them through targeted practice, not endless papers.
+        </p>
+        <div>
+          <Link href="/tuition" style="primary" class="bg-primary hover:bg-primary/90 text-white px-6 md:px-12 py-3 md:py-4 rounded-full text-sm md:text-lg font-semibold uppercase inline-block text-center">
+            Learn how to improve your child's marks
+          </Link>
+        </div>
+      </div>
 
-    <!-- Testimonials Section -->
-    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-      {
-        testimonials.map((testimonial) => (
-          <div class="text-center">
-            <div class="flex justify-center text-yellow-400 mb-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            </div>
-            <p class="text-sm text-gray-600 italic">"{testimonial.quote}"</p>
-            <p class="text-xs text-gray-500 mt-2">{testimonial.author}</p>
-            <p class="text-xs text-gray-400">{testimonial.date}</p>
-          </div>
-        ))
-      }
+      <!-- Right Image -->
+      <div class="flex justify-center lg:justify-end">
+        <img
+          src="/items/parent-thinking-w-child.webp"
+          alt="Hero Image"
+          class="w-full max-w-md lg:max-w-lg rounded-lg"
+        />
+      </div>
     </div>
-  </div>
-
-  <div class="py-6 md:order-1">
-    <Image
-      src="/hero.jpg"
-      alt="A classroom setting with students"
-      width={500}
-      height={500}
-    />
   </div>
 </main>

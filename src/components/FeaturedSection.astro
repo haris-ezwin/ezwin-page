@@ -1,0 +1,93 @@
+---
+import { Image } from "astro:assets";
+import PSLESeriesPopup from "./PSLESeriesPopup.astro";
+import TuitionClassesPopup from "./TuitionClassesPopup.astro";
+
+const courses = [
+  {
+    badge: "It's Free",
+    badgeColor: "bg-primary",
+    title: "Free Math PSLE 10 Years Series",
+    buttonText: "Get It Now",
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/10-year-series.webp",
+    link: null,
+  },
+  {
+    badge: "It's Free",
+    badgeColor: "bg-primary",
+    title: "Free 1 Month Tuition Online Classes",
+    buttonText: "Claim Your Trial",
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/teaching-student.webp",
+    link: null,
+  },
+  {
+    badge: "It's Free",
+    badgeColor: "bg-primary",
+    title: "Free Past Year Math Exam Papers",
+    buttonText: "Get It Now",
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/looking-over.webp",
+    link: "/free-exam-papers",
+  },
+];
+---
+
+<div class="py-16 sm:py-24 bg-background">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+      {
+        courses.map((course) => (
+          <div class="flex flex-col items-center">
+            {/* Badge */}
+            <div class="mb-6">
+              <span
+                class={`${course.badgeColor} text-white px-4 py-1 rounded text-sm font-semibold`}>
+                {course.badge}
+              </span>
+            </div>
+
+            {/* Title */}
+            <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center h-24 flex items-center justify-center">
+              {course.title}
+            </h3>
+
+            {/* Image */}
+            <div class="w-full aspect-square max-w-sm mb-8 rounded-lg overflow-hidden">
+              <img
+                src={course.image}
+                alt={course.title}
+                class="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Button */}
+            {course.link ? (
+              <a
+                href={course.link}
+                class={`${course.buttonColor} text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200 w-full max-w-xs text-center block`}>
+                {course.buttonText}
+              </a>
+            ) : (
+              <button
+                onclick={
+                  course.title === "Free Math PSLE 10 Years Series"
+                    ? "openPSLESeriesPopup()"
+                    : course.title === "Free 1 Month Tuition Online Classes"
+                      ? "openTuitionClassesPopup()"
+                      : ""
+                }
+                class={`${course.buttonColor} text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200 w-full max-w-xs`}>
+                {course.buttonText}
+              </button>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<PSLESeriesPopup />
+<TuitionClassesPopup />

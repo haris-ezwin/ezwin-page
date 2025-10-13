@@ -1,11 +1,12 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "configurations": [
     {
-      "command": "./node_modules/.bin/astro dev",
-      "name": "Development server",
+      "name": "Launch EzWin Astro site in Chrome (localhost:4321)",
+      "type": "chrome",
       "request": "launch",
-      "type": "node-terminal"
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}"
     }
   ]
 }

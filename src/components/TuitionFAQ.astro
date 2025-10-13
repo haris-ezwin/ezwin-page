@@ -1,0 +1,103 @@
+---
+const testimonials = [
+  {
+    stars: 5,
+    quote: "You are the best teacher I ever have!",
+    name: "Aira, P4 Student",
+    date: "April 2025",
+  },
+  {
+    stars: 5,
+    quote: "Aira really enjoys ur lessons and specifically say she wants you to be her permanent teacher. 😁",
+    name: "Mdm Kamilah, Mum of Aira",
+    date: "April 2025",
+  },
+  {
+    stars: 5,
+    quote: "Teacher explained well",
+    name: "Jing En, P5 Student",
+    date: "May 2025",
+  },
+  {
+    stars: 5,
+    quote: "We had a previous tutor, and she prefers you as she can understand your explanation",
+    name: "Mdm Grace, Mum of Jing En",
+    date: "May 2025",
+  },
+];
+
+const faqs = [
+  {
+    question: "What happens during the classes?",
+    answer: [
+      "Every session is live on Zoom with a small group of students. We start with an engaging Kahoot lesson to make learning interactive and fun.",
+      "After that, each student receives a personalised worksheet (we call them Level Up Worksheets 🚀) tailored to their specific weaknesses. This gives them focused practice on the areas where they need the most improvement.",
+      "Once students have completed their work, we go through the questions together as a group so everyone can understand the solutions and learn from each other.",
+    ],
+  },
+  {
+    question: "Who is this for?",
+    answer: [
+      "Parents with Primary 4 to 6 children who are invested in their child's progress and can provide supervision during online classes. We've found that students with a parent or sibling nearby are more focused and engaged.",
+      "If you expect to leave your child alone online, we'd recommend physical tuition instead. Our approach works best when there's someone nearby to keep them accountable.",
+    ],
+  },
+  {
+    question: "How much does the tuition cost?",
+    answer: [
+      "Tuition is $200 per month after your free trial ends.",
+      "We only request payment details once you confirm you want to continue.",
+      "When you stay on, we charge your card each month and you can cancel anytime before the next billing cycle.",
+    ],
+  },
+];
+---
+
+<!-- Testimonials Section -->
+<section class="py-16 md:py-24 bg-amber-50">
+  <div class="mx-auto max-w-6xl px-6 lg:px-8">
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">What parents and students say about us</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      {
+        testimonials.map((testimonial) => (
+          <div class="bg-white rounded-3xl p-8 shadow-sm">
+            <div class="flex gap-1 mb-4">
+              {Array.from({ length: testimonial.stars }).map(() => (
+                <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                  <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                </svg>
+              ))}
+            </div>
+            <p class="text-lg md:text-xl italic text-gray-700 mb-4">"{testimonial.quote}"</p>
+            <p class="text-sm text-gray-600 font-medium">{testimonial.name}</p>
+            <p class="text-sm text-gray-500">{testimonial.date}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-16 md:py-24">
+  <div class="mx-auto max-w-5xl px-6 lg:px-8">
+    <div class="space-y-10">
+      {
+        faqs.map((faq) => (
+          <div class="rounded-3xl">
+            <div class="bg-primary text-white rounded-3xl px-8 py-6">
+              <h3 class="font-semibold text-lg md:text-xl leading-snug">
+                {faq.question}
+              </h3>
+            </div>
+            <div class="px-8 pb-8 pt-6 md:pt-8 text-base md:text-lg leading-relaxed text-gray-700">
+              {faq.answer.map((paragraph) => (
+                <p class="mb-4 last:mb-0">{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
