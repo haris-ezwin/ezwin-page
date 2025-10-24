@@ -176,6 +176,16 @@ import { primarySchools } from "@utils/school.js";
     document.getElementById("tuition-classes-popup").classList.add("flex");
   };
 
+  // Check URL parameters on page load
+  document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const openParam = urlParams.get("open");
+
+    if (openParam === "tuition") {
+      window.openTuitionClassesPopup();
+    }
+  });
+
   // Close on outside click
   document
     .getElementById("tuition-classes-popup")
