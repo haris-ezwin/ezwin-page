@@ -21,7 +21,7 @@ import Link from "@components/ui/link.astro";
           Discover why your child is not hitting the marks or grades you want
           and how you can improve it.
         </p>
-        <div>
+        <div class="flex justify-center lg:justify-start">
           <Link
             href="/tuition"
             style="primary"
@@ -31,8 +31,8 @@ import Link from "@components/ui/link.astro";
         </div>
       </div>
 
-      <!-- Right Placeholder Image (temporary until video embed) -->
-      <div class="flex justify-center lg:justify-end">
+      <!-- Right Placeholder Image (hidden on mobile until video embed is ready) -->
+      <div class="hidden sm:flex justify-center lg:justify-end">
         <img
           src="https://placehold.co/720x480?text=Video+Placeholder"
           alt="Video placeholder"
