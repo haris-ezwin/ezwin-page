@@ -37,21 +37,28 @@ const makeTitle = title
 
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ZNVP3F95M"
-    ></script>
+    <!-- Google Analytics disabled on localhost -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
+      (function () {
+        const hostname = window.location.hostname;
+        const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
 
-      gtag("config", "G-8ZNVP3F95M");
+        if (isLocalhost) return;
 
-      if (window.location.hostname === "localhost") {
-        gtag("set", "traffic_type", "internal");
-      }
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          window.dataLayer.push(arguments);
+        }
+        window.gtag = gtag;
+
+        const gaScript = document.createElement("script");
+        gaScript.async = true;
+        gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-8ZNVP3F95M";
+        document.head.appendChild(gaScript);
+
+        gtag("js", new Date());
+        gtag("config", "G-8ZNVP3F95M");
+      })();
     </script>
 
     <!-- <link rel="preload" as="image" href={src} alt="Hero" /> -->
