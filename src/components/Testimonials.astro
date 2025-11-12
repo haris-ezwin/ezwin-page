@@ -21,10 +21,15 @@ const testimonials = [
 ];
 ---
 
-<section class="w-full">
-  <div class="mx-auto max-w-7xl px-6 lg:px-8 py-0">
-    <div id="testimonial-rotator" class="lg:hidden">
-      <div class="flex flex-col gap-2">
+<section
+  id="testimonials-section"
+  class="w-full"
+  data-testimonials={encodeURIComponent(JSON.stringify(testimonials))}>
+  <div class="mx-auto max-w-7xl px-6 lg:px-8 pt-8 lg:pt-0 pb-0">
+    <div id="testimonial-rotator" class="lg:hidden overflow-hidden">
+      <div
+        id="testimonial-rotator-content"
+        class="flex flex-col gap-2 will-change-transform">
         <div class="flex gap-0.5 text-yellow-400">
           {
             Array.from({ length: 5 }).map(() => (
@@ -74,33 +79,56 @@ const testimonials = [
   </div>
 
   <script is:inline>
-    const testimonials = JSON.parse(
-      decodeURIComponent("{encodeURIComponent(JSON.stringify(testimonials))}")
-    );
+    const testimonialsSection = document.getElementById("testimonials-section");
+    const testimonials = testimonialsSection
+      ? JSON.parse(
+          decodeURIComponent(testimonialsSection.dataset.testimonials || "[]"),
+        )
+      : [];
     let testimonialIndex = 0;
+    const contentEl = document.getElementById("testimonial-rotator-content");
 
-    function renderTestimonial(index) {
+    function applyTestimonial(testimonial) {
       const textEl = document.getElementById("testimonial-rotator-text");
       const nameEl = document.getElementById("testimonial-rotator-name");
       const roleEl = document.getElementById("testimonial-rotator-role");
-      const testimonial = testimonials[index];
 
-      if (textEl && nameEl && roleEl && testimonial) {
-        textEl.textContent = `"${testimonial.content}"`;
-        nameEl.textContent = testimonial.name;
-        roleEl.textContent = testimonial.role;
+      if (!textEl || !nameEl || !roleEl || !testimonial) return;
+      textEl.textContent = `"${testimonial.content}"`;
+      nameEl.textContent = testimonial.name;
+      roleEl.textContent = testimonial.role;
+    }
+
+    function renderTestimonial(index, animate = true) {
+      const testimonial = testimonials[index];
+      if (!testimonial) return;
+
+      if (!animate || !contentEl) {
+        applyTestimonial(testimonial);
+        return;
       }
+
+      contentEl.style.transition = "none";
+      contentEl.style.transform = "translateX(-105%)";
+
+      requestAnimationFrame(() => {
+        applyTestimonial(testimonial);
+        requestAnimationFrame(() => {
+          contentEl.style.transition = "transform 450ms ease-out";
+          contentEl.style.transform = "translateX(0)";
+        });
+      });
     }
 
     function startTestimonialLoop() {
       const rotator = document.getElementById("testimonial-rotator");
-      if (!rotator) return;
+      if (!rotator || testimonials.length === 0) return;
 
-      renderTestimonial(testimonialIndex);
+      renderTestimonial(testimonialIndex, false);
       setInterval(() => {
         testimonialIndex = (testimonialIndex + 1) % testimonials.length;
         renderTestimonial(testimonialIndex);
-      }, 1000);
+      }, 4500);
     }
 
     if (typeof window !== "undefined") {
