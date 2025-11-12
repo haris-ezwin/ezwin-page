@@ -2,6 +2,8 @@
 import { SEO } from "astro-seo";
 import Footer from "@components/footer.astro";
 import Navbar from "@components/navbar/navbar.astro";
+import PSLESeriesPopup from "@components/PSLESeriesPopup.astro";
+import TuitionClassesPopup from "@components/TuitionClassesPopup.astro";
 import "@fontsource-variable/inter/index.css";
 import "@fontsource-variable/bricolage-grotesque";
 
@@ -89,6 +91,8 @@ const makeTitle = title
     <Navbar />
     <slot />
     <Footer />
+    <PSLESeriesPopup />
+    <TuitionClassesPopup />
     <style is:global>
       /* Improve Page speed */
       /* https://css-tricks.com/almanac/properties/c/content-visibility/ */
