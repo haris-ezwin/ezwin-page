@@ -1,10 +1,128 @@
-<footer class="my-20">
-  <p class="text-center text-sm text-slate-500">
-    Copyright © {new Date().getFullYear()} EzWin Academy. All rights reserved.
-  </p>
-  <!--
-    Can we ask you a favor 🙏
-    Please keep this backlink on your website if possible.
-    or Purchase a commercial license from https://web3templates.com
-  -->
+---
+const footerLinks = [
+  {
+    title: "Free Math PSLE 10 Year Series",
+    href: "#psle-series",
+    onclick: "openPSLESeriesPopup()",
+  },
+  {
+    title: "Free 1 Month Online Tuition",
+    href: "#free-tuition-class",
+    onclick: "openTuitionClassesPopup()",
+  },
+  {
+    title: "Free Exam Papers",
+    href: "/free-exam-papers",
+  },
+  {
+    title: "Schedule",
+    href: "/schedule",
+  },
+  {
+    title: "About",
+    href: "/about",
+  },
+  {
+    title: "Blog",
+    href: "/blog",
+  },
+];
+
+const supportLinks = [
+  { label: "Support", href: "/support" },
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+];
+---
+
+<footer class="bg-slate-950 text-white mt-16">
+  <div class="mx-auto max-w-7xl px-6 py-12">
+    <div
+      class="grid gap-10 lg:grid-cols-[minmax(0,2fr)_repeat(2,minmax(0,1fr))]">
+      <div class="space-y-4">
+        <a href="/" class="flex items-center gap-2 text-lg">
+          <img src="/ezwin-logo.svg" alt="EzWin Logo" class="w-8 h-8" />
+          <div class="leading-tight">
+            <span class="font-bold text-white">EzWin</span>
+            <span class="text-slate-300">Academy</span>
+          </div>
+        </a>
+        <p class="text-sm text-slate-300 max-w-md">
+          Primary school math mastery, PSLE readiness, and caring guidance for
+          every parent who wants their child to thrive.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <button
+            onclick="openTuitionClassesPopup()"
+            class="bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full px-6 py-2 transition-colors">
+            Book a Free Trial Lesson
+          </button>
+          <button
+            onclick="openPSLESeriesPopup()"
+            class="border border-white/30 hover:border-white text-white text-sm font-semibold rounded-full px-6 py-2 transition-colors">
+            Download PSLE 10 Year Series
+          </button>
+        </div>
+        <div class="text-sm text-slate-400 space-y-1">
+          <p>
+            Email: <a
+              href="mailto:support@ezwin.academy"
+              class="text-white hover:text-primary">support@ezwin.academy</a
+            >
+          </p>
+          <p>12 Aljunied Rd, #06-01 KH PLAZA @ ALJUNIED, Singapore</p>
+        </div>
+      </div>
+
+      <div>
+        <h4
+          class="text-xs font-semibold tracking-widest text-slate-400 uppercase">
+          Programmes
+        </h4>
+        <ul class="mt-4 space-y-2 text-sm">
+          {
+            footerLinks.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  onclick={item.onclick}
+                  class="text-slate-300 hover:text-white transition-colors">
+                  {item.title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h4
+          class="text-xs font-semibold tracking-widest text-slate-400 uppercase">
+          Need Help?
+        </h4>
+        <ul class="mt-4 space-y-2 text-sm text-slate-300">
+          {
+            supportLinks.map((item) => (
+              <li>
+                <a href={item.href} class="hover:text-white transition-colors">
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-white/10">
+    <div
+      class="mx-auto max-w-7xl px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+      <p>
+        © {new Date().getFullYear()} EzWin Academy. All rights reserved.
+      </p>
+      <p class="text-slate-500">
+        UEN 202440736C Haris Samingan Ventures Pte Ltd
+      </p>
+    </div>
+  </div>
 </footer>

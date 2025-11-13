@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /psle-10-year-series
 
-Sitemap: http://astroship.web3templates.com/sitemap-index.xml
+Sitemap: https://astroship.web3templates.com/sitemap-index.xml
