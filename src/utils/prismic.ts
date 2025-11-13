@@ -20,6 +20,14 @@ export async function getAllBlogPosts(): Promise<BlogPostDocument[]> {
 // Backwards compatible name if other modules still import getAllPosts.
 export const getAllPosts = getAllBlogPosts;
 
+export async function getBlogPostByUID(uid: string) {
+  if (!uid) {
+    throw new Error("Missing blog UID");
+  }
+
+  return client.getByUID(BLOG_TYPE, uid);
+}
+
 export async function getPage(uuid: string) {
   return client.getByUID("page", uuid, { pageSize: 1, page: 1 });
 }
