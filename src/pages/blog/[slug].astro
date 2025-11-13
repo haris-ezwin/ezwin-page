@@ -6,17 +6,31 @@ import { getFormattedDate } from "@utils/all";
 import {
   getAllBlogPosts,
   getBlogPostByUID,
+  getAllAuthors,
   type BlogPostDocument,
+  type AuthorDocument,
 } from "@utils/prismic";
+
+type PrismicImage = { src: string; alt: string };
+
+type AuthorInfo = {
+  name: string;
+  image: PrismicImage | null;
+};
+
+type AuthorLookup = {
+  byId: Map<string, AuthorDocument>;
+  byUid: Map<string, AuthorDocument>;
+};
 
 type NormalizedPost = {
   title: string;
   snippet: string;
   publishDate: Date | null;
-  author: string;
+  author: AuthorInfo | null;
   category: string;
   tags: string[];
-  image: { src: string; alt: string } | null;
+  image: PrismicImage | null;
   contentHtml: string;
 };
 
@@ -48,17 +62,24 @@ const toPlainText = (field: unknown): string => {
   return "";
 };
 
+const normalizeImageField = (field: unknown): PrismicImage | null => {
+  if (!field || typeof field !== "object") return null;
+  const candidate = field as { url?: string; alt?: unknown };
+  if (!candidate.url || typeof candidate.url !== "string") return null;
+
+  return {
+    src: candidate.url,
+    alt: typeof candidate.alt === "string" ? candidate.alt : "",
+  };
+};
+
 const pickImageField = (data: Record<string, any>) => {
   const imageKeys = ["featured_image", "cover_image", "image", "hero_image"];
 
   for (const key of imageKeys) {
     const value = data?.[key];
-    if (value?.url) {
-      return {
-        src: value.url as string,
-        alt: typeof value.alt === "string" ? value.alt : "",
-      };
-    }
+    const normalized = normalizeImageField(value);
+    if (normalized) return normalized;
   }
 
   return null;
@@ -92,6 +113,111 @@ const getTagList = (post: BlogPostDocument) => {
   return [];
 };
 
+const toAuthorInfoFromData = (
+  data?: Record<string, unknown>,
+): AuthorInfo | null => {
+  if (!data) return null;
+  const name =
+    toPlainText(data["name"]) ||
+    toPlainText(data["full_name"]) ||
+    toPlainText(data["title"]);
+  const image =
+    normalizeImageField(data["image"]) ||
+    normalizeImageField(data["avatar"]) ||
+    normalizeImageField(data["photo"]);
+
+  if (!name && !image) return null;
+  return { name, image };
+};
+
+const buildAuthorLookup = (authors: AuthorDocument[]): AuthorLookup => {
+  const byId = new Map<string, AuthorDocument>();
+  const byUid = new Map<string, AuthorDocument>();
+
+  for (const author of authors) {
+    byId.set(author.id, author);
+    if (author.uid) {
+      byUid.set(author.uid, author);
+    }
+  }
+
+  return { byId, byUid };
+};
+
+const getAuthorInfoFromRelation = (
+  candidate: unknown,
+  lookup: AuthorLookup,
+): AuthorInfo | null => {
+  if (!candidate || typeof candidate !== "object") return null;
+
+  const reference = candidate as {
+    id?: string;
+    uid?: string;
+    data?: unknown;
+  };
+
+  if (reference.id && lookup.byId.has(reference.id)) {
+    const doc = lookup.byId.get(reference.id)!;
+    return toAuthorInfoFromData(doc.data ?? {});
+  }
+
+  if (reference.uid && lookup.byUid.has(reference.uid)) {
+    const doc = lookup.byUid.get(reference.uid)!;
+    return toAuthorInfoFromData(doc.data ?? {});
+  }
+
+  if (
+    reference.data &&
+    typeof reference.data === "object" &&
+    reference.data !== null
+  ) {
+    return toAuthorInfoFromData(reference.data as Record<string, unknown>);
+  }
+
+  return null;
+};
+
+const resolveAuthorInfo = (
+  post: BlogPostDocument,
+  lookup: AuthorLookup,
+): AuthorInfo | null => {
+  const data = post.data ?? {};
+  const relationshipCandidates: unknown[] = [];
+
+  if (data.author) relationshipCandidates.push(data.author);
+
+  if (Array.isArray(data.authors) && data.authors.length > 0) {
+    const firstAuthor = data.authors[0];
+    if (firstAuthor?.author) {
+      relationshipCandidates.push(firstAuthor.author);
+    }
+    relationshipCandidates.push(firstAuthor);
+  }
+
+  if (data.primary?.author) relationshipCandidates.push(data.primary.author);
+
+  for (const candidate of relationshipCandidates) {
+    const info = getAuthorInfoFromRelation(candidate, lookup);
+    if (info) return info;
+  }
+
+  const fallbackFields = [
+    data.author_name,
+    data.author_full_name,
+    data.author,
+    data.byline,
+  ];
+
+  for (const field of fallbackFields) {
+    const text = toPlainText(field);
+    if (text) {
+      return { name: text, image: null };
+    }
+  }
+
+  return null;
+};
+
 export async function getStaticPaths() {
   const posts = await getAllBlogPosts();
 
@@ -120,6 +246,9 @@ if (!post) {
   throw Astro.redirect("/blog");
 }
 
+const authorDocs = await getAllAuthors();
+const authorLookup = buildAuthorLookup(authorDocs);
+
 const publishDateValue =
   post.data?.publishDate ??
   post.data?.publish_date ??
@@ -137,9 +266,7 @@ const normalizedPost: NormalizedPost = {
       ? post.data.meta_description
       : ""),
   publishDate: publishDateValue ? new Date(publishDateValue) : null,
-  author:
-    toPlainText(post.data?.author) ||
-    (typeof post.data?.author_name === "string" ? post.data.author_name : ""),
+  author: resolveAuthorInfo(post, authorLookup),
   category: toPlainText(post.data?.category),
   tags: getTagList(post),
   image: pickImageField(post.data ?? {}),
@@ -182,26 +309,34 @@ const contentHtml =
           <h1 class="text-4xl font-bold text-gray-800 mb-4">
             {normalizedPost.title}
           </h1>
-          <div class="flex items-center gap-4 text-gray-600 mb-6">
+          <div class="flex flex-wrap items-center gap-4 text-gray-600 mb-6">
             <span>
               {normalizedPost.publishDate
                 ? getFormattedDate(normalizedPost.publishDate)
                 : ""}
             </span>
             {normalizedPost.author && (
-              <>
-                <span>•</span>
-                <span>{normalizedPost.author}</span>
-              </>
+              <div class="flex items-center gap-3">
+                <span class="text-gray-400">•</span>
+                {normalizedPost.author.image && (
+                  <img
+                    src={normalizedPost.author.image.src}
+                    alt={normalizedPost.author.image.alt}
+                    class="h-10 w-10 rounded-full object-cover border border-gray-200"
+                    loading="lazy"
+                  />
+                )}
+                <span>By {normalizedPost.author.name || "Guest Author"}</span>
+              </div>
             )}
             {
               normalizedPost.category && (
-                <>
-                  <span>•</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-gray-400">•</span>
                   <span class="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm">
                     {normalizedPost.category}
                   </span>
-                </>
+                </div>
               )
             }
           </div>

@@ -2,14 +2,27 @@
 import Container from "@components/container.astro";
 import Layout from "@layouts/Layout.astro";
 import { getFormattedDate } from "@utils/all";
-import { getAllBlogPosts } from "@utils/prismic";
+import { getAllBlogPosts, getAllAuthors } from "@utils/prismic";
+import type { BlogPostDocument, AuthorDocument } from "@utils/prismic";
+
+type PrismicImage = { src: string; alt: string };
+
+type AuthorInfo = {
+  name: string;
+  image: PrismicImage | null;
+};
 
 type BlogPostCard = {
   slug: string;
   title: string;
-  snippet: string;
   publishDate: Date | null;
-  image: { src: string; alt: string } | null;
+  image: PrismicImage | null;
+  author: AuthorInfo | null;
+};
+
+type AuthorLookup = {
+  byId: Map<string, AuthorDocument>;
+  byUid: Map<string, AuthorDocument>;
 };
 
 const toPlainText = (field: unknown): string => {
@@ -40,46 +53,156 @@ const toPlainText = (field: unknown): string => {
   return "";
 };
 
+const normalizeImageField = (field: unknown): PrismicImage | null => {
+  if (!field || typeof field !== "object") return null;
+  const candidate = field as { url?: string; alt?: unknown };
+  if (!candidate.url || typeof candidate.url !== "string") return null;
+
+  return {
+    src: candidate.url,
+    alt: typeof candidate.alt === "string" ? candidate.alt : "",
+  };
+};
+
 const pickImageField = (data: Record<string, any>) => {
   const imageKeys = ["featured_image", "cover_image", "image", "hero_image"];
 
   for (const key of imageKeys) {
     const value = data?.[key];
-    if (value?.url) {
-      return {
-        src: value.url as string,
-        alt: typeof value.alt === "string" ? value.alt : "",
-      };
+    const normalized = normalizeImageField(value);
+    if (normalized) {
+      return normalized;
     }
   }
 
   return null;
 };
 
-const prismicPosts = await getAllBlogPosts();
+const toAuthorInfoFromData = (
+  data?: Record<string, unknown>,
+): AuthorInfo | null => {
+  if (!data) return null;
+  const name =
+    toPlainText(data["name"]) ||
+    toPlainText(data["full_name"]) ||
+    toPlainText(data["title"]);
+  const image =
+    normalizeImageField(data["image"]) ||
+    normalizeImageField(data["avatar"]) ||
+    normalizeImageField(data["photo"]);
+
+  if (!name && !image) return null;
+  return { name, image };
+};
+
+const buildAuthorLookup = (authors: AuthorDocument[]): AuthorLookup => {
+  const byId = new Map<string, AuthorDocument>();
+  const byUid = new Map<string, AuthorDocument>();
+
+  for (const author of authors) {
+    byId.set(author.id, author);
+    if (author.uid) {
+      byUid.set(author.uid, author);
+    }
+  }
+
+  return { byId, byUid };
+};
+
+const getAuthorInfoFromRelation = (
+  candidate: unknown,
+  lookup: AuthorLookup,
+): AuthorInfo | null => {
+  if (!candidate || typeof candidate !== "object") return null;
+
+  const reference = candidate as {
+    id?: string;
+    uid?: string;
+    data?: unknown;
+  };
+
+  if (reference.id && lookup.byId.has(reference.id)) {
+    const doc = lookup.byId.get(reference.id)!;
+    return toAuthorInfoFromData(doc.data ?? {});
+  }
+
+  if (reference.uid && lookup.byUid.has(reference.uid)) {
+    const doc = lookup.byUid.get(reference.uid)!;
+    return toAuthorInfoFromData(doc.data ?? {});
+  }
+
+  if (
+    reference.data &&
+    typeof reference.data === "object" &&
+    reference.data !== null
+  ) {
+    return toAuthorInfoFromData(reference.data as Record<string, unknown>);
+  }
+
+  return null;
+};
+
+const resolveAuthorInfo = (
+  post: BlogPostDocument,
+  lookup: AuthorLookup,
+): AuthorInfo | null => {
+  const data = post.data ?? {};
+  const relationshipCandidates: unknown[] = [];
+
+  if (data.author) relationshipCandidates.push(data.author);
+
+  if (Array.isArray(data.authors) && data.authors.length > 0) {
+    const firstAuthor = data.authors[0];
+    if (firstAuthor?.author) {
+      relationshipCandidates.push(firstAuthor.author);
+    }
+    relationshipCandidates.push(firstAuthor);
+  }
+
+  if (data.primary?.author) relationshipCandidates.push(data.primary.author);
+
+  for (const candidate of relationshipCandidates) {
+    const info = getAuthorInfoFromRelation(candidate, lookup);
+    if (info) return info;
+  }
+
+  const fallbackFields = [
+    data.author_name,
+    data.author_full_name,
+    data.author,
+    data.byline,
+  ];
+
+  for (const field of fallbackFields) {
+    const text = toPlainText(field);
+    if (text) {
+      return { name: text, image: null };
+    }
+  }
+
+  return null;
+};
+
+const [prismicPosts, authorDocs] = await Promise.all([
+  getAllBlogPosts(),
+  getAllAuthors(),
+]);
+
+console.log(authorDocs);
+
+const authorLookup = buildAuthorLookup(authorDocs);
 
 // Normalize Prismic documents into the shape needed by the UI.
 const posts: BlogPostCard[] = prismicPosts
   .map((post) => {
-    const publishDateValue =
-      post.data?.publishDate ??
-      post.data?.publish_date ??
-      post.first_publication_date ??
-      post.last_publication_date ??
-      null;
+    const publishDateValue = post.first_publication_date;
 
     return {
       slug: post.uid ?? post.slugs?.[0] ?? post.id,
       title: toPlainText(post.data?.title) || "Untitled post",
-      snippet:
-        toPlainText(post.data?.snippet) ||
-        toPlainText(post.data?.excerpt) ||
-        toPlainText(post.data?.description) ||
-        (typeof post.data?.meta_description === "string"
-          ? post.data.meta_description
-          : ""),
       publishDate: publishDateValue ? new Date(publishDateValue) : null,
       image: pickImageField(post.data ?? {}),
+      author: resolveAuthorInfo(post, authorLookup),
     };
   })
   .filter((post) => Boolean(post.slug));
@@ -119,13 +242,29 @@ const sortedPosts = posts.sort(
                     {post.title}
                   </a>
                 </h2>
-                <p class="mt-3 text-gray-600 line-clamp-3">
-                  {post.snippet || "No preview available"}
-                </p>
-                <div class="mt-4 flex items-center justify-between">
-                  <span class="text-sm text-gray-500">
-                    {post.publishDate ? getFormattedDate(post.publishDate) : ""}
-                  </span>
+                <div class="mt-4 flex items-center justify-between gap-4">
+                  <div class="text-sm text-gray-500 space-y-3">
+                    <span class="block">
+                      {post.publishDate
+                        ? getFormattedDate(post.publishDate)
+                        : ""}
+                    </span>
+                    {post.author && (
+                      <div class="flex items-center gap-3 text-gray-700">
+                        {post.author.image && (
+                          <img
+                            src={post.author.image.src}
+                            alt={post.author.image.alt}
+                            class="h-9 w-9 rounded-full object-cover border border-gray-200"
+                            loading="lazy"
+                          />
+                        )}
+                        <span class="font-medium">
+                          By {post.author.name || "Guest Author"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                   <a
                     href={`/blog/${post.slug}`}
                     class="text-primary font-medium hover:text-primary/80 inline-flex items-center gap-2">
