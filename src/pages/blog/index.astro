@@ -17,6 +17,7 @@ type BlogPostCard = {
   title: string;
   publishDate: Date | null;
   image: PrismicImage | null;
+  tags: string[];
   author: AuthorInfo | null;
 };
 
@@ -188,8 +189,6 @@ const [prismicPosts, authorDocs] = await Promise.all([
   getAllAuthors(),
 ]);
 
-console.log(authorDocs);
-
 const authorLookup = buildAuthorLookup(authorDocs);
 
 // Normalize Prismic documents into the shape needed by the UI.
@@ -202,6 +201,9 @@ const posts: BlogPostCard[] = prismicPosts
       title: toPlainText(post.data?.title) || "Untitled post",
       publishDate: publishDateValue ? new Date(publishDateValue) : null,
       image: pickImageField(post.data ?? {}),
+      tags: Array.isArray(post.tags)
+        ? post.tags.filter((tag) => typeof tag === "string")
+        : [],
       author: resolveAuthorInfo(post, authorLookup),
     };
   })
@@ -211,46 +213,149 @@ const posts: BlogPostCard[] = prismicPosts
 const sortedPosts = posts.sort(
   (a, b) => (b.publishDate?.valueOf() ?? 0) - (a.publishDate?.valueOf() ?? 0),
 );
+
+const sections = [
+  { id: "recent", label: "Recent", posts: sortedPosts },
+  {
+    id: "how-to-score-al1",
+    label: "How to score AL1",
+    posts: sortedPosts.filter((post) =>
+      post.tags.some((tag) => tag.toLowerCase() === "psle"),
+    ),
+  },
+  {
+    id: "updates",
+    label: "Updates",
+    posts: sortedPosts.filter((post) =>
+      post.tags.some((tag) => tag.toLowerCase() === "updates"),
+    ),
+  },
+];
 ---
 
 <Layout title="Blog | EzWin Academy">
   <Container>
     <div class="py-16 sm:py-20">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl lg:text-5xl font-bold">Latest Blog Posts</h1>
-        <p class="mt-4 text-lg text-gray-600">
-          Tips, strategies, and insights for students and parents
-        </p>
+      <div class="mx-auto max-w-5xl space-y-10 text-center">
+        <div class="space-y-3">
+          <p class="text-sm uppercase tracking-wide text-primary font-semibold">
+            EzWin Blog
+          </p>
+          <h1 class="text-3xl lg:text-4xl font-bold leading-tight">
+            Insights & Stories
+          </h1>
+          <p class="text-gray-600">
+            Tips, strategies, and updates for parents and students.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3">
+          {
+            sections.map((section, index) => (
+              <button
+                type="button"
+                data-filter={section.id}
+                class:list={[
+                  "px-4 py-2 rounded-full text-sm font-semibold border transition-colors",
+                  index === 0
+                    ? "bg-primary text-white border-primary"
+                    : "bg-white text-gray-800 border-gray-200 hover:border-primary hover:text-primary",
+                ]}
+                aria-pressed={index === 0}
+              >
+                {section.label}
+              </button>
+            ))
+          }
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="mt-12 space-y-14">
         {
-          sortedPosts.map((post) => (
-            <a
-              href={`/blog/${post.slug}`}
-              class="group block bg-white rounded-2xl border border-gray-300 shadow-sm overflow-hidden hover:shadow-md transition-shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          sections.map((section, index) => (
+            <section
+              id={section.id}
+              data-filter-panel={section.id}
+              class:list={[
+                "space-y-6 mx-auto max-w-6xl",
+                index !== 0 && "hidden",
+              ]}
             >
-              {post.image && (
-                <div class="aspect-video">
-                  <img
-                    src={post.image.src}
-                    alt={post.image.alt}
-                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                </div>
-              )}
-              <div class="p-6">
-                <h2 class="text-xl font-semibold text-gray-900 line-clamp-2 group-hover:text-primary">
-                  {post.title}
+              <div class="flex items-center gap-3">
+                <h2 class="text-2xl lg:text-3xl font-bold text-gray-900">
+                  {section.label}
                 </h2>
-                <div class="mt-4 text-sm text-gray-500">
-                  {post.publishDate ? getFormattedDate(post.publishDate) : ""}
-                </div>
+                <span class="h-px flex-1 bg-gray-200 hidden sm:block"></span>
               </div>
-            </a>
+
+              {
+                section.posts.length > 0 ? (
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {
+                      section.posts.map((post) => (
+                        <a
+                          href={`/blog/${post.slug}`}
+                          class="group block bg-white rounded-2xl border border-gray-300 shadow-sm overflow-hidden hover:shadow-md transition-shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        >
+                          {post.image && (
+                            <div class="aspect-video">
+                              <img
+                                src={post.image.src}
+                                alt={post.image.alt}
+                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                              />
+                            </div>
+                          )}
+                          <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 line-clamp-2 group-hover:text-primary">
+                              {post.title}
+                            </h3>
+                            <div class="mt-4 text-sm text-gray-500">
+                              {post.publishDate
+                                ? getFormattedDate(post.publishDate)
+                                : ""}
+                            </div>
+                          </div>
+                        </a>
+                      ))
+                    }
+                  </div>
+                ) : (
+                  <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-6 text-gray-600">
+                    More stories will appear here soon.
+                  </div>
+                )
+              }
+            </section>
           ))
         }
       </div>
     </div>
   </Container>
 </Layout>
+
+<script is:inline>
+  const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
+  const panels = Array.from(document.querySelectorAll("[data-filter-panel]"));
+
+  const setActive = (targetId) => {
+    filterButtons.forEach((btn) => {
+      const isActive = btn.dataset.filter === targetId;
+      btn.classList.toggle("bg-primary", isActive);
+      btn.classList.toggle("text-white", isActive);
+      btn.classList.toggle("border-primary", isActive);
+      btn.classList.toggle("bg-white", !isActive);
+      btn.classList.toggle("text-gray-800", !isActive);
+      btn.classList.toggle("border-gray-200", !isActive);
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+
+    panels.forEach((panel) => {
+      panel.classList.toggle("hidden", panel.dataset.filterPanel !== targetId);
+    });
+  };
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => setActive(btn.dataset.filter));
+  });
+</script>
