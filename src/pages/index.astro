@@ -73,7 +73,7 @@ const pickImageField = (data: Record<string, any>) => {
 };
 
 const latestBlogPosts: BlogCard[] = (await getAllBlogPosts())
-  .slice(0, 3)
+  .slice(0, 6)
   .map((post) => ({
     slug: post.uid ?? post.slugs?.[0] ?? post.id,
     title: toPlainText(post.data?.title) || "Untitled post",

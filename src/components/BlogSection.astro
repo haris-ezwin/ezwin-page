@@ -11,26 +11,23 @@ type BlogCard = {
 };
 
 const { posts = [] } = Astro.props as { posts: BlogCard[] };
+const mainStories = posts.slice(0, 2);
+const recentPosts = posts.slice(2);
 ---
 
 <section class="py-16 sm:py-20">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-10">
+    <div
+      class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-10">
       <div>
-        <p class="text-sm font-semibold uppercase tracking-wide text-primary">
-          Blog
-        </p>
-        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-1">
-          Insights for parents and students
-        </h2>
+        <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mt-1">Blog</h2>
         <p class="text-gray-600 mt-3">
-          Practical tips on study habits, exam preparation, and growing confidence in class.
+          Tips on how to score that AL1 and fun stuff we found.
         </p>
       </div>
       <a
         href="/blog"
-        class="inline-flex items-center gap-2 text-primary font-semibold hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
+        class="inline-flex items-center gap-2 text-primary font-semibold hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         View all posts
         <span aria-hidden="true">→</span>
       </a>
@@ -38,43 +35,82 @@ const { posts = [] } = Astro.props as { posts: BlogCard[] };
 
     {
       posts.length > 0 ? (
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {
-            posts.map((post) => (
-              <a
-                href={`/blog/${post.slug}`}
-                class="group block bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                <div class="aspect-video bg-gray-100 overflow-hidden">
-                  {post.image ? (
-                    <img
-                      src={post.image.src}
-                      alt={post.image.alt || post.title}
-                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                    />
-                  ) : (
-                    <div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                      No image available
-                    </div>
-                  )}
-                </div>
-                <div class="p-6">
-                  <p class="text-sm text-gray-500">
-                    {post.publishDate ? getFormattedDate(post.publishDate) : ""}
-                  </p>
-                  <h3 class="mt-2 text-xl font-semibold text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
-                    {post.title}
-                  </h3>
-                  <div class="mt-4 inline-flex items-center gap-2 text-primary font-semibold">
-                    Read more
-                    <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">
-                      →
-                    </span>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <h3 class="text-lg font-semibold text-gray-900">Must Read</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {mainStories.map((post) => (
+                <a
+                  href={`/blog/${post.slug}`}
+                  class="group block bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  <div class="aspect-video bg-gray-100 overflow-hidden">
+                    {post.image ? (
+                      <img
+                        src={post.image.src}
+                        alt={post.image.alt || post.title}
+                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      />
+                    ) : (
+                      <div class="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                        No image available
+                      </div>
+                    )}
                   </div>
+                    <div class="p-6">
+                      <p class="text-sm text-gray-500">
+                        {post.publishDate
+                          ? getFormattedDate(post.publishDate)
+                          : ""}
+                      </p>
+                      <h3 class="mt-2 text-xl font-semibold text-gray-900 group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h3>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+          <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-gray-900">Recent</h3>
+            <div class="space-y-4">
+              {recentPosts.length > 0 ? (
+                recentPosts.map((post) => (
+                  <a
+                    href={`/blog/${post.slug}`}
+                    class="group flex gap-4 rounded-xl border border-gray-200 bg-white p-4 hover:shadow-sm transition-shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    <div class="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                      {post.image ? (
+                        <img
+                          src={post.image.src}
+                          alt={post.image.alt || post.title}
+                          class="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs text-center px-2">
+                          No image
+                        </div>
+                      )}
+                    </div>
+                      <div class="flex-1">
+                        <p class="text-xs text-gray-500">
+                          {post.publishDate
+                            ? getFormattedDate(post.publishDate)
+                            : ""}
+                        </p>
+                        <h4 class="mt-1 text-base font-semibold text-gray-900 group-hover:text-primary">
+                          {post.title}
+                        </h4>
+                      </div>
+                    </a>
+                  ))
+                ) : (
+                <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-600">
+                  More stories will appear here once published.
                 </div>
-              </a>
-            ))
-          }
+              )}
+            </div>
+          </div>
         </div>
       ) : (
         <div class="border border-dashed border-gray-300 rounded-xl p-8 text-center text-gray-600 bg-gray-50">
