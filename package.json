@@ -20,6 +20,8 @@
     "@iconify-json/mdi": "^1.2.3",
     "@iconify-json/simple-icons": "^1.2.26",
     "@iconify-json/uil": "^1.2.3",
+    "@prismicio/client": "^7.21.0",
+    "@prismicio/helpers": "^2.3.9",
     "@supabase/supabase-js": "^2.54.0",
     "@tailwindcss/typography": "^0.5.16",
     "astro": "^5.15.1",

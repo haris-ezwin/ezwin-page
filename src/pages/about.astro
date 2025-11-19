@@ -4,44 +4,63 @@ import Container from "@components/container.astro";
 ---
 
 <Layout title="About">
-  <div class="flex items-center justify-center py-20 md:py-32">
-    <Container>
-      <div class="mx-auto max-w-4xl text-center px-6">
-        <h1
-          class="text-5xl md:text-6xl font-black mb-12 leading-tight text-gray-900">
-          THE MISSION
-        </h1>
-
-        <p class="text-xl md:text-2xl leading-relaxed mb-8 text-gray-700">
-          To change what and how we teach. This tuition is just the start.
-        </p>
-
-        <p
-          class="text-lg md:text-xl leading-relaxed mb-12 text-gray-600 max-w-3xl mx-auto">
-          We think that all the problems in the world can be solved with
-          education. If we are taught to be nicer and push for progress, we
-          believe there will be less problems and more progress towards what can
-          be possible.
-        </p>
-
-        <button
-          onclick="window.location.href='/tuition'"
-          class="bg-primary hover:bg-blue-800 text-white px-10 py-4 rounded-full text-lg font-semibold transition-colors duration-200">
-          Join The Mission
-        </button>
-
-        <div class="mt-16 pt-12 border-t border-gray-200">
-          <p class="text-lg md:text-xl text-gray-600 mb-3">
-            We only have 1 value:
+  <Container class="py-16 md:py-24">
+    <div class="mx-auto max-w-5xl space-y-16 md:space-y-20">
+      <section class="grid gap-10 md:gap-12">
+        <div class="space-y-4">
+          <p class="text-sm font-semibold uppercase tracking-wide text-primary">
+            What is EzWin Academy?
           </p>
-          <p class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Be the parent you wish you had
-          </p>
-          <p class="text-lg md:text-xl text-gray-600">
-            This is so that we can work towards a better future for our generation.
+          <h2 class="text-3xl font-bold text-gray-900">
+            An online math tuition for Primary School, but a lil better
+          </h2>
+          <p class="text-lg text-gray-700">
+            EzWin Academy is a next-generation online math tuition centre
+            dedicated to primary school students in Singapore. We combine
+            personalised instruction, smart digital resources, and a supportive
+            community to help every child build deep understanding,
+            problem-solving confidence, and long-term mastery. With a focus on
+            parent partnership and transparent progress updates, EzWin Academy
+            believes every child deserves a learning journey tailored to their
+            strengths and needs.
           </p>
         </div>
-      </div>
-    </Container>
-  </div>
+
+        <div class="space-y-4">
+          <p class="text-sm font-semibold uppercase tracking-wide text-primary">
+            Founder story
+          </p>
+          <h2 class="text-3xl font-bold text-gray-900">
+            From coding educator to math mentor
+          </h2>
+          <p class="text-lg text-gray-700">
+            Haris Samingan has 7 years of teaching experience and a background
+            as an Ex-Google Developer Expert. He has taught at NTU, SMU, ACS(I),
+            MGS, and Singapore Sports School. In 2025, he brought that expertise
+            to mathematics, creating EzWin Academy to blend rigorous teaching
+            with technology so every student can feel supported and capable.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <p class="text-sm font-semibold uppercase tracking-wide text-primary">
+            How is EzWin Academy different?
+          </p>
+          <h2 class="text-3xl font-bold text-gray-900">
+            Personalised, transparent, and parent-first
+          </h2>
+          <ul class="space-y-3 text-lg text-gray-700">
+            <li>
+              • Smart practice plans that prioritise the highest-impact topics
+              for each student.
+            </li>
+            <li>
+              • A single guiding value: be the parent you wish you
+              had—supportive, honest, and focused on growth.
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </Container>
 </Layout>

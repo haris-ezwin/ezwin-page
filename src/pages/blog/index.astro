@@ -1,80 +1,361 @@
 ---
 import Container from "@components/container.astro";
 import Layout from "@layouts/Layout.astro";
-import { getCollection } from "astro:content";
 import { getFormattedDate } from "@utils/all";
+import { getAllBlogPosts, getAllAuthors } from "@utils/prismic";
+import type { BlogPostDocument, AuthorDocument } from "@utils/prismic";
 
-// Fetch all blog posts using Astro's content collections
-const posts = await getCollection("blog", ({ data }) => {
-  return !data.draft; // Only show non-draft posts
-});
+type PrismicImage = { src: string; alt: string };
+
+type AuthorInfo = {
+  name: string;
+  image: PrismicImage | null;
+};
+
+type BlogPostCard = {
+  slug: string;
+  title: string;
+  publishDate: Date | null;
+  image: PrismicImage | null;
+  tags: string[];
+  author: AuthorInfo | null;
+};
+
+type AuthorLookup = {
+  byId: Map<string, AuthorDocument>;
+  byUid: Map<string, AuthorDocument>;
+};
+
+const toPlainText = (field: unknown): string => {
+  if (!field) return "";
+  if (typeof field === "string") return field;
+  if (Array.isArray(field)) {
+    return field
+      .map((block) => {
+        if (
+          typeof block === "object" &&
+          block !== null &&
+          "text" in block &&
+          typeof (block as { text?: string }).text === "string"
+        ) {
+          return (block as { text?: string }).text ?? "";
+        }
+        return "";
+      })
+      .join(" ")
+      .trim();
+  }
+  if (typeof field === "object" && field !== null) {
+    const candidate = field as { text?: string };
+    if (typeof candidate.text === "string") {
+      return candidate.text;
+    }
+  }
+  return "";
+};
+
+const normalizeImageField = (field: unknown): PrismicImage | null => {
+  if (!field || typeof field !== "object") return null;
+  const candidate = field as { url?: string; alt?: unknown };
+  if (!candidate.url || typeof candidate.url !== "string") return null;
+
+  return {
+    src: candidate.url,
+    alt: typeof candidate.alt === "string" ? candidate.alt : "",
+  };
+};
+
+const pickImageField = (data: Record<string, any>) => {
+  const imageKeys = ["featured_image", "cover_image", "image", "hero_image"];
+
+  for (const key of imageKeys) {
+    const value = data?.[key];
+    const normalized = normalizeImageField(value);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  return null;
+};
+
+const toAuthorInfoFromData = (
+  data?: Record<string, unknown>,
+): AuthorInfo | null => {
+  if (!data) return null;
+  const name =
+    toPlainText(data["name"]) ||
+    toPlainText(data["full_name"]) ||
+    toPlainText(data["title"]);
+  const image =
+    normalizeImageField(data["image"]) ||
+    normalizeImageField(data["avatar"]) ||
+    normalizeImageField(data["photo"]);
+
+  if (!name && !image) return null;
+  return { name, image };
+};
+
+const buildAuthorLookup = (authors: AuthorDocument[]): AuthorLookup => {
+  const byId = new Map<string, AuthorDocument>();
+  const byUid = new Map<string, AuthorDocument>();
+
+  for (const author of authors) {
+    byId.set(author.id, author);
+    if (author.uid) {
+      byUid.set(author.uid, author);
+    }
+  }
+
+  return { byId, byUid };
+};
+
+const getAuthorInfoFromRelation = (
+  candidate: unknown,
+  lookup: AuthorLookup,
+): AuthorInfo | null => {
+  if (!candidate || typeof candidate !== "object") return null;
+
+  const reference = candidate as {
+    id?: string;
+    uid?: string;
+    data?: unknown;
+  };
+
+  if (reference.id && lookup.byId.has(reference.id)) {
+    const doc = lookup.byId.get(reference.id)!;
+    return toAuthorInfoFromData(doc.data ?? {});
+  }
+
+  if (reference.uid && lookup.byUid.has(reference.uid)) {
+    const doc = lookup.byUid.get(reference.uid)!;
+    return toAuthorInfoFromData(doc.data ?? {});
+  }
+
+  if (
+    reference.data &&
+    typeof reference.data === "object" &&
+    reference.data !== null
+  ) {
+    return toAuthorInfoFromData(reference.data as Record<string, unknown>);
+  }
+
+  return null;
+};
+
+const resolveAuthorInfo = (
+  post: BlogPostDocument,
+  lookup: AuthorLookup,
+): AuthorInfo | null => {
+  const data = post.data ?? {};
+  const relationshipCandidates: unknown[] = [];
+
+  if (data.author) relationshipCandidates.push(data.author);
+
+  if (Array.isArray(data.authors) && data.authors.length > 0) {
+    const firstAuthor = data.authors[0];
+    if (firstAuthor?.author) {
+      relationshipCandidates.push(firstAuthor.author);
+    }
+    relationshipCandidates.push(firstAuthor);
+  }
+
+  if (data.primary?.author) relationshipCandidates.push(data.primary.author);
+
+  for (const candidate of relationshipCandidates) {
+    const info = getAuthorInfoFromRelation(candidate, lookup);
+    if (info) return info;
+  }
+
+  const fallbackFields = [
+    data.author_name,
+    data.author_full_name,
+    data.author,
+    data.byline,
+  ];
+
+  for (const field of fallbackFields) {
+    const text = toPlainText(field);
+    if (text) {
+      return { name: text, image: null };
+    }
+  }
+
+  return null;
+};
+
+const [prismicPosts, authorDocs] = await Promise.all([
+  getAllBlogPosts(),
+  getAllAuthors(),
+]);
+
+const authorLookup = buildAuthorLookup(authorDocs);
+
+// Normalize Prismic documents into the shape needed by the UI.
+const posts: BlogPostCard[] = prismicPosts
+  .map((post) => {
+    const publishDateValue = post.first_publication_date;
+
+    return {
+      slug: post.uid ?? post.slugs?.[0] ?? post.id,
+      title: toPlainText(post.data?.title) || "Untitled post",
+      publishDate: publishDateValue ? new Date(publishDateValue) : null,
+      image: pickImageField(post.data ?? {}),
+      tags: Array.isArray(post.tags)
+        ? post.tags.filter((tag) => typeof tag === "string")
+        : [],
+      author: resolveAuthorInfo(post, authorLookup),
+    };
+  })
+  .filter((post) => Boolean(post.slug));
 
 // Sort posts by publish date (newest first)
 const sortedPosts = posts.sort(
-  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
+  (a, b) => (b.publishDate?.valueOf() ?? 0) - (a.publishDate?.valueOf() ?? 0),
 );
+
+const sections = [
+  { id: "recent", label: "Recent", posts: sortedPosts },
+  {
+    id: "how-to-score-al1",
+    label: "How to score AL1",
+    posts: sortedPosts.filter((post) =>
+      post.tags.some((tag) => tag.toLowerCase() === "psle"),
+    ),
+  },
+  {
+    id: "updates",
+    label: "Updates",
+    posts: sortedPosts.filter((post) =>
+      post.tags.some((tag) => tag.toLowerCase() === "updates"),
+    ),
+  },
+];
 ---
 
 <Layout title="Blog | EzWin Academy">
   <Container>
     <div class="py-16 sm:py-20">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl lg:text-5xl font-bold">Latest Blog Posts</h1>
-        <p class="mt-4 text-lg text-gray-600">
-          Tips, strategies, and insights for students and parents
-        </p>
+      <div class="mx-auto max-w-5xl space-y-10 text-center">
+        <div class="space-y-3">
+          <p class="text-sm uppercase tracking-wide text-primary font-semibold">
+            EzWin Blog
+          </p>
+          <h1 class="text-3xl lg:text-4xl font-bold leading-tight">
+            Insights & Stories
+          </h1>
+          <p class="text-gray-600">
+            Tips, strategies, and updates for parents and students.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-3">
+          {
+            sections.map((section, index) => (
+              <button
+                type="button"
+                data-filter={section.id}
+                class:list={[
+                  "px-4 py-2 rounded-full text-sm font-semibold border transition-colors",
+                  index === 0
+                    ? "bg-primary text-white border-primary"
+                    : "bg-white text-gray-800 border-gray-200 hover:border-primary hover:text-primary",
+                ]}
+                aria-pressed={index === 0}
+              >
+                {section.label}
+              </button>
+            ))
+          }
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="mt-12 space-y-14">
         {
-          sortedPosts.map((post) => (
-            <article class="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-              {post.data.image && (
-                <div class="aspect-video">
-                  <img
-                    src={post.data.image.src}
-                    alt={post.data.image.alt || ""}
-                    class="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <div class="p-6">
-                <h2 class="text-xl font-semibold text-gray-900 line-clamp-2">
-                  <a href={`/blog/${post.slug}`} class="hover:text-primary">
-                    {post.data.title}
-                  </a>
+          sections.map((section, index) => (
+            <section
+              id={section.id}
+              data-filter-panel={section.id}
+              class:list={[
+                "space-y-6 mx-auto max-w-6xl",
+                index !== 0 && "hidden",
+              ]}
+            >
+              <div class="flex items-center gap-3">
+                <h2 class="text-2xl lg:text-3xl font-bold text-gray-900">
+                  {section.label}
                 </h2>
-                <p class="mt-3 text-gray-600 line-clamp-3">
-                  {post.data.snippet || "No preview available"}
-                </p>
-                <div class="mt-4 flex items-center justify-between">
-                  <span class="text-sm text-gray-500">
-                    {getFormattedDate(post.data.publishDate)}
-                  </span>
-                  <a
-                    href={`/blog/${post.slug}`}
-                    class="text-primary font-medium hover:text-primary/80 inline-flex items-center gap-2">
-                    Read More
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </a>
-                </div>
+                <span class="h-px flex-1 bg-gray-200 hidden sm:block"></span>
               </div>
-            </article>
+
+              {
+                section.posts.length > 0 ? (
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {
+                      section.posts.map((post) => (
+                        <a
+                          href={`/blog/${post.slug}`}
+                          class="group block bg-white rounded-2xl border border-gray-300 shadow-sm overflow-hidden hover:shadow-md transition-shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                        >
+                          {post.image && (
+                            <div class="aspect-video">
+                              <img
+                                src={post.image.src}
+                                alt={post.image.alt}
+                                class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                              />
+                            </div>
+                          )}
+                          <div class="p-6">
+                            <h3 class="text-xl font-semibold text-gray-900 line-clamp-2 group-hover:text-primary">
+                              {post.title}
+                            </h3>
+                            <div class="mt-4 text-sm text-gray-500">
+                              {post.publishDate
+                                ? getFormattedDate(post.publishDate)
+                                : ""}
+                            </div>
+                          </div>
+                        </a>
+                      ))
+                    }
+                  </div>
+                ) : (
+                  <div class="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-6 text-gray-600">
+                    More stories will appear here soon.
+                  </div>
+                )
+              }
+            </section>
           ))
         }
       </div>
     </div>
   </Container>
 </Layout>
+
+<script is:inline>
+  const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
+  const panels = Array.from(document.querySelectorAll("[data-filter-panel]"));
+
+  const setActive = (targetId) => {
+    filterButtons.forEach((btn) => {
+      const isActive = btn.dataset.filter === targetId;
+      btn.classList.toggle("bg-primary", isActive);
+      btn.classList.toggle("text-white", isActive);
+      btn.classList.toggle("border-primary", isActive);
+      btn.classList.toggle("bg-white", !isActive);
+      btn.classList.toggle("text-gray-800", !isActive);
+      btn.classList.toggle("border-gray-200", !isActive);
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+
+    panels.forEach((panel) => {
+      panel.classList.toggle("hidden", panel.dataset.filterPanel !== targetId);
+    });
+  };
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener("click", () => setActive(btn.dataset.filter));
+  });
+</script>

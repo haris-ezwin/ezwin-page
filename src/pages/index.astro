@@ -6,7 +6,83 @@ import Testimonials from "@components/Testimonials.astro";
 import FeaturedSection from "@components/FeaturedSection.astro";
 import FAQ from "@components/FAQ.astro";
 import AboutFounder from "@components/AboutFounder.astro";
+import BlogSection from "@components/BlogSection.astro";
 import Layout from "@layouts/Layout.astro";
+import { getAllBlogPosts } from "@utils/prismic";
+
+type PrismicImage = { src: string; alt: string };
+
+type BlogCard = {
+  slug: string;
+  title: string;
+  publishDate: Date | null;
+  image: PrismicImage | null;
+};
+
+const toPlainText = (field: unknown): string => {
+  if (!field) return "";
+  if (typeof field === "string") return field;
+  if (Array.isArray(field)) {
+    return field
+      .map((block) => {
+        if (
+          typeof block === "object" &&
+          block !== null &&
+          "text" in block &&
+          typeof (block as { text?: string }).text === "string"
+        ) {
+          return (block as { text?: string }).text ?? "";
+        }
+        return "";
+      })
+      .join(" ")
+      .trim();
+  }
+  if (typeof field === "object" && field !== null) {
+    const candidate = field as { text?: string };
+    if (typeof candidate.text === "string") {
+      return candidate.text;
+    }
+  }
+  return "";
+};
+
+const normalizeImageField = (field: unknown): PrismicImage | null => {
+  if (!field || typeof field !== "object") return null;
+  const candidate = field as { url?: string; alt?: unknown };
+  if (!candidate.url || typeof candidate.url !== "string") return null;
+
+  return {
+    src: candidate.url,
+    alt: typeof candidate.alt === "string" ? candidate.alt : "",
+  };
+};
+
+const pickImageField = (data: Record<string, any>) => {
+  const imageKeys = ["featured_image", "cover_image", "image", "hero_image"];
+
+  for (const key of imageKeys) {
+    const value = data?.[key];
+    const normalized = normalizeImageField(value);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  return null;
+};
+
+const latestBlogPosts: BlogCard[] = (await getAllBlogPosts())
+  .slice(0, 6)
+  .map((post) => ({
+    slug: post.uid ?? post.slugs?.[0] ?? post.id,
+    title: toPlainText(post.data?.title) || "Untitled post",
+    publishDate: post.first_publication_date
+      ? new Date(post.first_publication_date)
+      : null,
+    image: pickImageField(post.data ?? {}),
+  }))
+  .filter((post) => Boolean(post.slug));
 ---
 
 <Layout title="">
@@ -14,6 +90,7 @@ import Layout from "@layouts/Layout.astro";
     <Hero />
     <Testimonials />
     <FeaturedSection />
+    <BlogSection posts={latestBlogPosts} />
     <FAQ />
     <AboutFounder />
     <Freebies />
