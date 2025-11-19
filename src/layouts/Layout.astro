@@ -39,11 +39,18 @@ const makeTitle = title
 
     <meta name="generator" content={Astro.generator} />
 
+    <script
+      async
+      defer
+      src="https://static.cdn.prismic.io/prismic.js?new=true&repo=ezwin"
+    ></script>
+
     <!-- Google Analytics disabled on localhost -->
     <script>
       (function () {
         const hostname = window.location.hostname;
-        const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
+        const isLocalhost =
+          hostname === "localhost" || hostname === "127.0.0.1";
 
         if (isLocalhost) return;
 
@@ -55,7 +62,8 @@ const makeTitle = title
 
         const gaScript = document.createElement("script");
         gaScript.async = true;
-        gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-8ZNVP3F95M";
+        gaScript.src =
+          "https://www.googletagmanager.com/gtag/js?id=G-8ZNVP3F95M";
         document.head.appendChild(gaScript);
 
         gtag("js", new Date());
