@@ -12,7 +12,7 @@ type BlogCard = {
 
 const { posts = [] } = Astro.props as { posts: BlogCard[] };
 const mainStories = posts.slice(0, 2);
-const recentPosts = posts.slice(2);
+const recentPosts = posts.slice(2, 5);
 ---
 
 <section class="py-16 sm:py-20">
@@ -25,12 +25,6 @@ const recentPosts = posts.slice(2);
           Tips on how to score that AL1 and fun stuff we found.
         </p>
       </div>
-      <a
-        href="/blog"
-        class="inline-flex items-center gap-2 text-primary font-semibold hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-        View all posts
-        <span aria-hidden="true">→</span>
-      </a>
     </div>
 
     {
@@ -110,6 +104,12 @@ const recentPosts = posts.slice(2);
                 </div>
               )}
             </div>
+            <a
+              href="/blog"
+              class="inline-flex items-center justify-center w-full gap-2 rounded-full border border-primary text-primary px-4 py-2 text-sm font-semibold hover:bg-primary/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              View all posts
+              <span aria-hidden="true">→</span>
+            </a>
           </div>
         </div>
       ) : (
