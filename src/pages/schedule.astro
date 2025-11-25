@@ -65,6 +65,83 @@ const terms = rawTerms.map((term) => {
 });
 
 const visibleTerms = terms.filter((term) => term.endDate >= today);
+
+const gradeFilters = ["P4", "P5", "P6"];
+
+const scheduleDays = [
+  {
+    title: "Monday - Wednesday",
+    noLessons: ["Monday", "Tuesday", "Wednesday"],
+  },
+  {
+    title: "Thursday",
+    slots: [
+      {
+        time: "3:00 PM - 5:00 PM",
+        levels: ["P6"],
+      },
+      {
+        time: "5:30 PM - 7:30 PM",
+        levels: gradeFilters.slice(),
+      },
+    ],
+  },
+  {
+    title: "Friday",
+    slots: [
+      {
+        time: "3:00 PM - 5:00 PM",
+        levels: ["P6"],
+      },
+      {
+        time: "5:30 PM - 7:30 PM",
+        levels: gradeFilters.slice(),
+      },
+    ],
+  },
+  {
+    title: "Saturday",
+    slots: [
+      {
+        time: "10:00 AM - 12:00 PM",
+        levels: ["P6"],
+      },
+      {
+        time: "12:30 PM - 2:30 PM",
+        levels: gradeFilters.slice(),
+      },
+      {
+        time: "3:30 PM - 5:30 PM",
+        levels: gradeFilters.slice(),
+      },
+      {
+        time: "6:00 PM - 8:00 PM",
+        levels: gradeFilters.slice(),
+      },
+    ],
+  },
+  {
+    title: "Sunday",
+    slots: [
+      {
+        time: "10:00 AM - 12:00 PM",
+        levels: gradeFilters.slice(),
+      },
+      {
+        time: "1:00 PM - 3:00 PM",
+        levels: ["P6"],
+      },
+      {
+        time: "3:30 PM - 5:30 PM",
+        levels: gradeFilters.slice(),
+      },
+      {
+        time: "6:00 PM - 8:00 PM",
+        levels: gradeFilters.slice(),
+      },
+    ],
+  },
+];
 ---
 
 <Layout title="Schedule">
@@ -76,132 +153,153 @@ const visibleTerms = terms.filter((term) => term.endDate >= today);
           Class Schedule
         </h1>
         <p class="text-xl text-gray-600 mb-12 text-center">
-          Choose a time slot that works best for your child
+          Choose a time slot that works best for your child for the upcoming
+          2026
         </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+          {
+            gradeFilters.map((grade) => (
+              <button
+                type="button"
+                class="px-5 py-2 rounded-full border border-gray-300 text-sm font-semibold text-gray-700 transition-colors duration-200 hover:border-primary hover:text-primary"
+                data-grade-filter
+                data-level={grade}>
+                Primary {grade.replace("P", "")}
+              </button>
+            ))
+          }
+        </div>
 
         <!-- Timetable Cards -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Monday -->
-          <div
-            class="bg-white rounded-lg shadow-md p-6 border-t-4 border-gray-300">
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">Monday</h3>
-            <p class="text-gray-500 italic">No lessons</p>
-          </div>
+          {
+            scheduleDays.map((day) => (
+              <div
+                class={`bg-white rounded-lg shadow-md p-6 border-t-4 ${
+                  day.noLessons ? "border-gray-300" : "border-primary"
+                }`}
+                data-day-card>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                  {day.title}
+                </h3>
 
-          <!-- Tuesday -->
-          <div
-            class="bg-white rounded-lg shadow-md p-6 border-t-4 border-gray-300">
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">Tuesday</h3>
-            <p class="text-gray-500 italic">No lessons</p>
-          </div>
-
-          <!-- Wednesday -->
-          <div
-            class="bg-white rounded-lg shadow-md p-6 border-t-4 border-gray-300">
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">Wednesday</h3>
-            <p class="text-gray-500 italic">No lessons</p>
-          </div>
-
-          <!-- Thursday -->
-          <div
-            class="bg-white rounded-lg shadow-md p-6 border-t-4 border-primary">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Thursday</h3>
-            <div class="space-y-4">
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <p class="text-primary font-semibold">3:00 PM - 5:00 PM</p>
+                {day.noLessons ? (
+                  <div class="text-gray-500 italic space-y-2">
+                    {day.noLessons.map((dayName) => (
+                      <p>{dayName}: No lessons</p>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div class="space-y-4" data-slot-container>
+                      {day.slots?.map((slot) => (
+                        <div
+                          class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary"
+                          data-slot-levels={slot.levels.join(",")}>
+                          <p class="text-primary font-semibold">{slot.time}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <p
+                      class="mt-4 text-sm text-gray-500 hidden"
+                      data-no-slots-message>
+                      No available sessions for this level.
+                    </p>
+                  </>
+                )}
               </div>
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <p class="text-primary font-semibold">5:30 PM - 7:30 PM</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Friday -->
-          <div
-            class="bg-white rounded-lg shadow-md p-6 border-t-4 border-primary">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Friday</h3>
-            <div class="space-y-4">
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <div class="flex items-center justify-between gap-3">
-                  <p class="text-primary font-semibold">3:00 PM - 5:00 PM</p>
-                  <span
-                    class="text-xs font-semibold uppercase tracking-wide text-primary bg-primary/10 px-3 py-1 rounded-full">
-                    P6, 2026
-                  </span>
-                </div>
-              </div>
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <p class="text-primary font-semibold">5:30 PM - 7:30 PM</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Saturday -->
-          <div
-            class="bg-white rounded-lg shadow-md p-6 border-t-4 border-primary">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Saturday</h3>
-            <div class="space-y-4">
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <div class="flex items-center justify-between gap-3">
-                  <p class="text-primary font-semibold">10:00 AM - 12:00 PM</p>
-                  <span
-                    class="text-xs font-semibold uppercase tracking-wide text-primary bg-primary/10 px-3 py-1 rounded-full">
-                    P6, 2026
-                  </span>
-                </div>
-              </div>
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <div class="flex items-center justify-between">
-                  <p class="text-primary font-semibold">12:30 PM - 2:30 PM</p>
-                </div>
-              </div>
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <p class="text-primary font-semibold">3:30 PM - 5:30 PM</p>
-              </div>
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <p class="text-primary font-semibold">6:00 PM - 8:00 PM</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sunday -->
-          <div
-            class="bg-white rounded-lg shadow-md p-6 border-t-4 border-primary">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Sunday</h3>
-            <div class="space-y-4">
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <p class="text-primary font-semibold">10:00 AM - 12:00 PM</p>
-              </div>
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <div class="flex items-center justify-between gap-3">
-                  <p class="text-primary font-semibold">1:00 PM - 3:00 PM</p>
-                  <span
-                    class="text-xs font-semibold uppercase tracking-wide text-primary bg-primary/10 px-3 py-1 rounded-full">
-                    P6, 2026
-                  </span>
-                </div>
-              </div>
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <p class="text-primary font-semibold">3:30 PM - 5:30 PM</p>
-              </div>
-              <div
-                class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                <p class="text-primary font-semibold">6:00 PM - 8:00 PM</p>
-              </div>
-            </div>
-          </div>
+            ))
+          }
         </div>
+
+        <script type="module">
+          const initScheduleFilters = () => {
+            const buttons = document.querySelectorAll("[data-grade-filter]");
+            const dayCards = document.querySelectorAll("[data-day-card]");
+
+            if (!buttons.length) {
+              return;
+            }
+
+            let activeLevel = "P6";
+
+            const updateSlots = () => {
+              dayCards.forEach((card) => {
+                const slots = card.querySelectorAll("[data-slot-levels]");
+                const emptyMessage = card.querySelector(
+                  "[data-no-slots-message]",
+                );
+
+                if (!slots.length) {
+                  if (emptyMessage) {
+                    emptyMessage.classList.add("hidden");
+                  }
+                  return;
+                }
+
+                let hasVisibleSlot = false;
+
+                slots.forEach((slot) => {
+                  const levelData = slot.getAttribute("data-slot-levels") ?? "";
+                  const levels = levelData
+                    .split(",")
+                    .map((level) => level.trim())
+                    .filter(Boolean);
+                  const isMatch = !activeLevel || levels.includes(activeLevel);
+
+                  slot.classList.toggle("hidden", !isMatch);
+                  if (isMatch) {
+                    hasVisibleSlot = true;
+                  }
+                });
+
+                if (emptyMessage) {
+                  if (!activeLevel) {
+                    emptyMessage.classList.add("hidden");
+                  } else {
+                    const gradeLabel = activeLevel.replace("P", "");
+                    emptyMessage.textContent = hasVisibleSlot
+                      ? ""
+                      : `No available sessions for Primary ${gradeLabel}.`;
+                    emptyMessage.classList.toggle("hidden", hasVisibleSlot);
+                  }
+                }
+              });
+            };
+
+            const updateButtonStyles = () => {
+              buttons.forEach((button) => {
+                const level = button.getAttribute("data-level");
+                const isActive = level === activeLevel;
+
+                button.classList.toggle("bg-primary", isActive);
+                button.classList.toggle("text-white", isActive);
+                button.classList.toggle("border-primary", isActive);
+                button.classList.toggle("text-gray-700", !isActive);
+                button.classList.toggle("border-gray-300", !isActive);
+              });
+            };
+
+            buttons.forEach((button) => {
+              button.addEventListener("click", () => {
+                const level = button.getAttribute("data-level");
+                activeLevel = activeLevel === level ? null : level;
+                updateButtonStyles();
+                updateSlots();
+              });
+            });
+
+            updateButtonStyles();
+            updateSlots();
+          };
+
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initScheduleFilters);
+          } else {
+            initScheduleFilters();
+          }
+        </script>
 
         <!-- Terms Section -->
         <div class="mt-20">
