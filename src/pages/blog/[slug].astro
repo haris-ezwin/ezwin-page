@@ -9,6 +9,7 @@ import {
   getAllAuthors,
   type BlogPostDocument,
   type AuthorDocument,
+  linkResolver,
 } from "@utils/prismic";
 
 type PrismicImage = { src: string; alt: string };
@@ -89,15 +90,15 @@ const toHTML = (field: unknown): string => {
   if (!field) return "";
   if (typeof field === "string") return field;
   if (Array.isArray(field)) {
-    return asHTML(field as any);
+    return asHTML(field as any, linkResolver);
   }
   if (typeof field === "object" && field !== null) {
     const candidate = field as { richText?: unknown; text?: unknown };
     if (Array.isArray(candidate.richText)) {
-      return asHTML(candidate.richText as any);
+      return asHTML(candidate.richText as any, linkResolver);
     }
     if (Array.isArray(candidate.text)) {
-      return asHTML(candidate.text as any);
+      return asHTML(candidate.text as any, linkResolver);
     }
   }
   return "";
@@ -531,10 +532,24 @@ const recentPosts = (await getAllBlogPosts())
     root.style.scrollPaddingTop = offsetValue;
   };
 
+  const forceLinksNewTab = () => {
+    const articleLinks = document.querySelectorAll(".prose a[href]");
+    articleLinks.forEach((link) => {
+      const href = link.getAttribute("href") || "";
+      if (!href || href.startsWith("#")) return;
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+    });
+  };
+
   if (typeof window !== "undefined") {
-    window.addEventListener("load", setScrollOffset);
+    window.addEventListener("load", () => {
+      setScrollOffset();
+      forceLinksNewTab();
+    });
     window.addEventListener("resize", setScrollOffset);
     setScrollOffset();
+    forceLinksNewTab();
   }
 </script>
 

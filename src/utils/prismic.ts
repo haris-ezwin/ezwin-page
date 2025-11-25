@@ -1,4 +1,5 @@
 import { createClient } from "@prismicio/client";
+import type * as prismic from "@prismicio/client";
 import type { PrismicDocument } from "@prismicio/types";
 
 const API_ENDPOINT =
@@ -11,6 +12,18 @@ const client = createClient(API_ENDPOINT);
 
 export type BlogPostDocument = PrismicDocument<Record<string, any>>;
 export type AuthorDocument = PrismicDocument<Record<string, any>>;
+
+export const linkResolver = (doc: prismic.PrismicDocument) => {
+  switch (doc.type) {
+    case BLOG_TYPE:
+    case "blog_post":
+      return doc.uid ? `/blog/${doc.uid}` : "/blog";
+    case "page":
+      return doc.uid ? `/${doc.uid}` : "/";
+    default:
+      return "/";
+  }
+};
 
 export async function getAllBlogPosts(): Promise<BlogPostDocument[]> {
   return client.getAllByType(BLOG_TYPE, {
