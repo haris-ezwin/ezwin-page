@@ -521,7 +521,28 @@ const recentPosts = (await getAllBlogPosts())
   </Container>
 </Layout>
 
+<script>
+  const setScrollOffset = () => {
+    const header = document.getElementById("site-header");
+    const offset = (header?.offsetHeight ?? 0) + 12;
+    const offsetValue = `${offset}px`;
+    const root = document.documentElement;
+    root.style.setProperty("--scroll-offset", offsetValue);
+    root.style.scrollPaddingTop = offsetValue;
+  };
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("load", setScrollOffset);
+    window.addEventListener("resize", setScrollOffset);
+    setScrollOffset();
+  }
+</script>
+
 <style>
+  :global(:root) {
+    scroll-padding-top: var(--scroll-offset, 96px);
+  }
+
   .prose {
     color: #374151;
   }
@@ -542,6 +563,7 @@ const recentPosts = (await getAllBlogPosts())
     font-weight: 700;
     margin-top: 2rem;
     margin-bottom: 1rem;
+    scroll-margin-top: var(--scroll-offset, 96px);
   }
 
   .prose h2 {
@@ -550,6 +572,7 @@ const recentPosts = (await getAllBlogPosts())
     font-weight: 600;
     margin-top: 1.5rem;
     margin-bottom: 0.75rem;
+    scroll-margin-top: var(--scroll-offset, 96px);
   }
 
   .prose h3 {
@@ -558,6 +581,11 @@ const recentPosts = (await getAllBlogPosts())
     font-weight: 600;
     margin-top: 1.5rem;
     margin-bottom: 0.75rem;
+    scroll-margin-top: var(--scroll-offset, 96px);
+  }
+
+  .prose h4 {
+    scroll-margin-top: var(--scroll-offset, 96px);
   }
 
   .prose p {
