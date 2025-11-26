@@ -112,7 +112,7 @@ const scheduleDays = [
       },
       {
         time: "3:30 PM - 5:30 PM",
-        levels: gradeFilters.slice(),
+        levels: ["P5"],
       },
       {
         time: "6:00 PM - 8:00 PM",
@@ -215,6 +215,7 @@ const scheduleDays = [
 
         <script type="module">
           const initScheduleFilters = () => {
+            const gradeFilters = ["P4", "P5", "P6"];
             const buttons = document.querySelectorAll("[data-grade-filter]");
             const dayCards = document.querySelectorAll("[data-day-card]");
 
@@ -315,7 +316,10 @@ const scheduleDays = [
             buttons.forEach((button) => {
               button.addEventListener("click", () => {
                 const level = button.getAttribute("data-level");
-                activeLevel = activeLevel === level ? null : level;
+                if (level === activeLevel) {
+                  return;
+                }
+                activeLevel = level;
                 setQueryLevel(activeLevel);
                 updateButtonStyles();
                 updateSlots();
