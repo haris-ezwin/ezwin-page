@@ -222,7 +222,38 @@ const scheduleDays = [
               return;
             }
 
-            let activeLevel = "P6";
+            const normalizeLevel = (value) => {
+              if (!value) return null;
+              const normalized = value.trim().toUpperCase();
+              const withPrefix = normalized.startsWith("P")
+                ? normalized
+                : `P${normalized}`;
+              return gradeFilters.includes(withPrefix) ? withPrefix : null;
+            };
+
+            const getLevelFromQuery = () => {
+              const params = new URLSearchParams(window.location.search);
+              return (
+                normalizeLevel(params.get("level")) ||
+                normalizeLevel(params.get("p"))
+              );
+            };
+
+            const setQueryLevel = (level) => {
+              const params = new URLSearchParams(window.location.search);
+              if (level) {
+                params.set("level", level.toLowerCase());
+              } else {
+                params.delete("level");
+              }
+              const queryString = params.toString();
+              const newUrl = `${window.location.pathname}${
+                queryString ? `?${queryString}` : ""
+              }`;
+              window.history.replaceState({}, "", newUrl);
+            };
+
+            let activeLevel = getLevelFromQuery() ?? "P6";
 
             const updateSlots = () => {
               dayCards.forEach((card) => {
@@ -285,6 +316,7 @@ const scheduleDays = [
               button.addEventListener("click", () => {
                 const level = button.getAttribute("data-level");
                 activeLevel = activeLevel === level ? null : level;
+                setQueryLevel(activeLevel);
                 updateButtonStyles();
                 updateSlots();
               });
