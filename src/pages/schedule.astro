@@ -275,16 +275,19 @@ const gradeFilters = Array.from(
           )
         }
 
-        <script type="application/json" id="schedule-grade-filters">
-          {JSON.stringify(gradeFilters)}
-        </script>
+        <div
+          id="schedule-config"
+          data-grade-filters={gradeFilters.join(",")}
+          class="hidden"></div>
 
         <script type="module">
           const initScheduleFilters = () => {
-            const gradeFilters = JSON.parse(
-              document.getElementById("schedule-grade-filters")?.textContent ??
-                "[]",
-            );
+            const configEl = document.getElementById("schedule-config");
+            const gradeFilters =
+              (configEl?.dataset.gradeFilters || "")
+                .split(",")
+                .map((value) => value.trim())
+                .filter(Boolean) ?? [];
             const buttons = document.querySelectorAll("[data-grade-filter]");
             const dayCards = document.querySelectorAll("[data-day-card]");
 
@@ -323,7 +326,10 @@ const gradeFilters = Array.from(
               window.history.replaceState({}, "", newUrl);
             };
 
-            let activeLevel = getLevelFromQuery() ?? gradeFilters[0] ?? "";
+            const defaultLevel = gradeFilters.includes("P6")
+              ? "P6"
+              : gradeFilters[0] ?? "";
+            let activeLevel = getLevelFromQuery() ?? defaultLevel;
 
             const updateSlots = () => {
               dayCards.forEach((card) => {
