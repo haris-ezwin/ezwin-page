@@ -177,6 +177,15 @@ const scheduleDays = Array.from(
   }, new Map<string, { time: string; levels: string[] }[]>()),
 ).map(([title, slots]) => ({ title, slots }));
 
+["Monday", "Tuesday", "Wednesday"].forEach((day) => {
+  const alreadyExists = scheduleDays.some(
+    (scheduleDay) => scheduleDay.title === day,
+  );
+  if (!alreadyExists) {
+    scheduleDays.push({ title: day, slots: [] });
+  }
+});
+
 const orderIndex = (day: string) => {
   const index = DAY_ORDER.indexOf(day);
   return index === -1 ? Number.MAX_SAFE_INTEGER : index;
@@ -247,7 +256,7 @@ const gradeFilters = Array.from(
 
                   {!day.slots?.length ? (
                     <div class="text-gray-500 italic space-y-2">
-                      <p>No lessons scheduled.</p>
+                      <p>No available slots.</p>
                     </div>
                   ) : (
                     <>
