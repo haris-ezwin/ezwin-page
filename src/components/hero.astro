@@ -22,12 +22,28 @@ const heroTestimonials = [
       "Ur explanation is very very clear - she is super weak in fraction and now she can catch up a bit...",
   },
 ];
+
+const heroMathChips = [
+  { symbol: "+", color: "#FFD74A" },
+  { symbol: "–", color: "#E85DBF" },
+  { symbol: "×", color: "#63E6C9" },
+  { symbol: "÷", color: "#FFD74A" },
+];
 ---
 
 <main class="relative bg-background pt-12 pb-0 overflow-hidden">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
       <div class="text-left lg:col-span-2">
+        <div class="flex items-center gap-2 mb-4">
+          {heroMathChips.map((chip) => (
+            <span
+              class="inline-flex items-center justify-center w-9 h-9 rounded-full text-sm font-semibold"
+              style={`background:${chip.color};color:#0f172a;`}>
+              {chip.symbol}
+            </span>
+          ))}
+        </div>
         <h1
           class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 uppercase">
           Singapore Online Primary School Math Tuition
