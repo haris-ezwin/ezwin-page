@@ -11,10 +11,11 @@ const courses = [
   {
     title: "Free Math P6 Prelims Exam Paper",
     claimedText: "Coming soon",
-    buttonText: "Get It Now",
+    buttonText: "Coming Soon",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/online-education-2.svg",
-    link: "/free-exam-papers",
+    link: null,
+    disabled: true,
   },
   {
     title: "Free 1 Month Tuition Online Classes",
@@ -67,6 +68,8 @@ const courses = [
               </a>
             ) : (
               <button
+                disabled={course.disabled}
+                aria-disabled={course.disabled ? "true" : "false"}
                 onclick={
                   course.title === "Free Math PSLE 10 Years Series"
                     ? "openPSLESeriesPopup()"
@@ -74,7 +77,11 @@ const courses = [
                       ? "openTuitionClassesPopup()"
                       : ""
                 }
-                class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs mt-auto`}>
+                class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs mt-auto ${
+                  course.disabled
+                    ? "opacity-60 cursor-not-allowed pointer-events-none"
+                    : ""
+                }`}>
                 {course.buttonText}
               </button>
             )}
