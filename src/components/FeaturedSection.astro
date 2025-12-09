@@ -5,7 +5,7 @@ const courses = [
     claimedText: "5 parents have claimed it",
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
-    image: "/items/10-year-series.webp",
+    image: "/items/education-of-ideas.svg",
     link: null,
   },
   {
@@ -13,14 +13,24 @@ const courses = [
     claimedText: "7 parents have claimed it",
     buttonText: "Claim Your Trial",
     buttonColor: "bg-primary hover:bg-blue-800",
-    image: "/items/teaching-student.webp",
+    image: "/items/online-education.svg",
     link: null,
   },
   {
+    title: "Free Math P6 Prelims Exam Paper",
+    claimedText: "Coming soon",
+    buttonText: "Coming Soon",
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/online-education-2.svg",
+    link: null,
+    disabled: true,
+  },
+  {
     title: "Free Past Year Math Exam Papers",
+    claimedText: "3 parents have claimed it",
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
-    image: "/items/looking-over.webp",
+    image: "/items/value-of-knowledge.svg",
     link: "/free-exam-papers",
   },
 ];
@@ -28,12 +38,12 @@ const courses = [
 
 <div class="py-8 sm:py-16 bg-background">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 lg:gap-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
       {
         courses.map((course) => (
-          <div class="flex flex-col items-center text-center p-3 sm:p-0">
+          <div class="flex flex-col items-center text-center p-3 sm:p-0 h-full">
             {/* Title */}
-            <h3 class="text-base sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-0">
+            <h3 class="text-base sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-0 h-24 sm:h-28 flex items-center justify-center text-center">
               {course.title}
             </h3>
             <p class="mt-2 mb-4 sm:mb-6 text-[11px] sm:text-sm font-medium text-primary uppercase tracking-wide h-4 sm:h-5 flex items-center justify-center">
@@ -41,11 +51,11 @@ const courses = [
             </p>
 
             {/* Image */}
-            <div class="w-full aspect-square max-w-[180px] sm:max-w-sm mb-0 sm:mb-4 lg:mb-8 rounded-lg overflow-hidden">
+            <div class="w-full max-w-[180px] sm:max-w-sm h-36 sm:h-44 lg:h-48 mb-0 sm:mb-4 lg:mb-8 rounded-lg overflow-hidden flex items-center justify-center bg-white">
               <img
                 src={course.image}
                 alt={course.title}
-                class="w-full h-full object-cover"
+                class="w-full h-full object-contain"
               />
             </div>
 
@@ -53,11 +63,13 @@ const courses = [
             {course.link ? (
               <a
                 href={course.link}
-                class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs text-center block`}>
+                class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs text-center block mt-auto`}>
                 {course.buttonText}
               </a>
             ) : (
               <button
+                disabled={course.disabled}
+                aria-disabled={course.disabled ? "true" : "false"}
                 onclick={
                   course.title === "Free Math PSLE 10 Years Series"
                     ? "openPSLESeriesPopup()"
@@ -65,7 +77,11 @@ const courses = [
                       ? "openTuitionClassesPopup()"
                       : ""
                 }
-                class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs`}>
+                class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs mt-auto ${
+                  course.disabled
+                    ? "opacity-60 cursor-not-allowed pointer-events-none"
+                    : ""
+                }`}>
                 {course.buttonText}
               </button>
             )}

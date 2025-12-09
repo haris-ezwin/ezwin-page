@@ -1,45 +1,190 @@
 ---
-import Link from "@components/ui/link.astro";
+const heroTestimonials = [
+  {
+    name: "Aira",
+    role: "P5 Student, 2025",
+    quote: "You are the best teacher I ever have!",
+  },
+  {
+    name: "Mdm Kamilah",
+    role: "Parent of Aira, 2025",
+    quote: "Aira really loves your lessons.",
+  },
+  {
+    name: "Mdm Grace",
+    role: "Parent of Jing En, 2025",
+    quote: "Jing En prefers you over another tutor we had.",
+  },
+  {
+    name: "Mdm Venus",
+    role: "Parent, 2025",
+    quote:
+      "Ur explanation is very very clear - she is super weak in fraction and now she can catch up a bit...",
+  },
+];
+
+const heroMathChips = [
+  { symbol: "+", color: "#FFD74A" }, // lightbulb yellow
+  { symbol: "-", color: "#F56CB9" }, // magenta frame F56CB9
+  { symbol: "x", color: "#9B72FF" }, // cap purple 9B72FF
+  { symbol: "÷", color: "#48E1C6" }, // mint book
+];
 ---
 
-<main class="relative bg-background py-0 overflow-hidden">
+<main class="relative bg-background pt-12 pb-0 overflow-hidden">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-      <!-- Left Content -->
-      <div class="text-left">
-        <div class="mb-4 mt-0">
-          <span
-            class="bg-primary text-white px-4 py-1 rounded-full text-sm font-semibold">
-            Dear Parents
-          </span>
+    <div
+      class="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8 lg:gap-12 items-start">
+      <div class="text-left lg:col-span-2">
+        <div class="flex items-center gap-2 mb-4">
+          {
+            heroMathChips.map((chip) => (
+              <span
+                class="inline-flex items-center justify-center w-9 h-9 rounded-full text-sm font-semibold"
+                style={`background:${chip.color};color:#0f172a;`}>
+                {chip.symbol}
+              </span>
+            ))
+          }
         </div>
         <h1
           class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 uppercase">
-          Is your child not hitting the marks or grades you want?
+          Singapore Online Primary School Math Tuition
         </h1>
         <p class="text-lg md:text-xl text-gray-700 mb-8">
-          Discover why your child is not hitting the marks or grades you want
-          and how you can improve it.
+          We help your child understand hard math topics like fractions and math
+          problem sums, using personalised learning.
         </p>
-        <div class="flex justify-center lg:justify-start">
-          <Link
-            href="/tuition"
-            style="primary"
-            class="bg-primary hover:bg-primary/90 text-white px-6 md:px-12 py-3 md:py-4 rounded-full text-sm md:text-lg font-semibold uppercase inline-block text-center">
-            Learn how to improve my child's marks
-          </Link>
-        </div>
       </div>
-
-      <!-- Right Placeholder Image (hidden on mobile until video embed is ready) -->
-      <div class="hidden sm:flex justify-center lg:justify-end">
-        <img
-          src="/items/hero.webp"
-          alt="Video placeholder"
-          class="w-full max-w-md lg:max-w-lg"
-          style="transform: scaleX(-1);"
-        />
+      <div
+        class="w-full lg:col-span-3"
+        id="hero-testimonials"
+        data-hero-testimonials={encodeURIComponent(
+          JSON.stringify(heroTestimonials),
+        )}>
+        <div class="lg:hidden overflow-hidden mb-4">
+          <div
+            id="hero-testimonial-rotator-content"
+            class="bg-white border border-gray-200 shadow-sm rounded-2xl p-5 flex flex-col gap-2 will-change-transform">
+            <div class="flex gap-1 text-yellow-400">
+              {
+                Array.from({ length: 5 }).map(() => (
+                  <svg
+                    class="w-3.5 h-3.5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                  </svg>
+                ))
+              }
+            </div>
+            <p
+              id="hero-testimonial-rotator-text"
+              class="text-sm text-gray-800 leading-relaxed">
+              "{heroTestimonials[0].quote}"
+            </p>
+            <p class="text-xs font-semibold text-gray-900">
+              <span id="hero-testimonial-rotator-name"
+                >{heroTestimonials[0].name}</span
+              >
+              <span class="text-gray-500 font-normal">
+                (
+                <span id="hero-testimonial-rotator-role">
+                  {heroTestimonials[0].role}
+                </span>
+                )
+              </span>
+            </p>
+          </div>
+        </div>
+        <div class="hidden lg:grid grid-cols-2 gap-3">
+          {
+            heroTestimonials.map((testimonial) => (
+              <div class="bg-white border border-gray-200 shadow-sm rounded-2xl p-5 lg:p-6">
+                <div class="flex gap-1 text-yellow-400 mb-2">
+                  {Array.from({ length: 5 }).map(() => (
+                    <svg
+                      class="w-3.5 h-3.5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor">
+                      <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+                <p class="text-sm md:text-base text-gray-800 leading-relaxed mb-2">
+                  "{testimonial.quote}"
+                </p>
+                <p class="text-xs md:text-sm font-semibold text-gray-900">
+                  {testimonial.name}
+                  <span class="text-gray-500 font-normal">
+                    {" "}
+                    ({testimonial.role})
+                  </span>
+                </p>
+              </div>
+            ))
+          }
+        </div>
       </div>
     </div>
   </div>
 </main>
+
+<script is:inline>
+  const heroTestimonialsEl = document.getElementById("hero-testimonials");
+  const heroTestimonials = heroTestimonialsEl
+    ? JSON.parse(
+        decodeURIComponent(heroTestimonialsEl.dataset.heroTestimonials || "[]"),
+      )
+    : [];
+  const heroContentEl = document.getElementById(
+    "hero-testimonial-rotator-content",
+  );
+
+  function applyHeroTestimonial(testimonial) {
+    const textEl = document.getElementById("hero-testimonial-rotator-text");
+    const nameEl = document.getElementById("hero-testimonial-rotator-name");
+    const roleEl = document.getElementById("hero-testimonial-rotator-role");
+    if (!textEl || !nameEl || !roleEl || !testimonial) return;
+    textEl.textContent = `"${testimonial.quote}"`;
+    nameEl.textContent = testimonial.name;
+    roleEl.textContent = testimonial.role;
+  }
+
+  function renderHeroTestimonial(index, animate = true) {
+    const testimonial = heroTestimonials[index];
+    if (!testimonial) return;
+
+    if (!animate || !heroContentEl) {
+      applyHeroTestimonial(testimonial);
+      return;
+    }
+
+    heroContentEl.style.transition = "none";
+    heroContentEl.style.transform = "translateX(-105%)";
+
+    requestAnimationFrame(() => {
+      applyHeroTestimonial(testimonial);
+      requestAnimationFrame(() => {
+        heroContentEl.style.transition = "transform 450ms ease-out";
+        heroContentEl.style.transform = "translateX(0)";
+      });
+    });
+  }
+
+  function startHeroTestimonialLoop() {
+    const rotator = document.getElementById("hero-testimonials");
+    if (!rotator || heroTestimonials.length === 0) return;
+
+    let heroIndex = 0;
+    renderHeroTestimonial(heroIndex, false);
+    setInterval(() => {
+      heroIndex = (heroIndex + 1) % heroTestimonials.length;
+      renderHeroTestimonial(heroIndex);
+    }, 4500);
+  }
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("DOMContentLoaded", startHeroTestimonialLoop);
+  }
+</script>
