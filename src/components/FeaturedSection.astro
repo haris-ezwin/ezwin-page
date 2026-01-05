@@ -9,14 +9,6 @@ const courses = [
     link: null,
   },
   {
-    title: "Free 1 Month Tuition Online Classes",
-    claimedText: "7 parents have claimed it",
-    buttonText: "Claim Your Trial",
-    buttonColor: "bg-primary hover:bg-blue-800",
-    image: "/items/online-education.svg",
-    link: null,
-  },
-  {
     title: "Free Math P6 Prelims Exam Paper",
     claimedText: "Coming soon",
     buttonText: "Coming Soon",
@@ -73,9 +65,7 @@ const courses = [
                 onclick={
                   course.title === "Free Math PSLE 10 Years Series"
                     ? "openPSLESeriesPopup()"
-                    : course.title === "Free 1 Month Tuition Online Classes"
-                      ? "openTuitionClassesPopup()"
-                      : ""
+                    : ""
                 }
                 class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs mt-auto ${
                   course.disabled
