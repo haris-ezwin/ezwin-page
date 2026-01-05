@@ -59,18 +59,12 @@ const courses = [
               </a>
             ) : (
               <button
-                disabled={course.disabled}
-                aria-disabled={course.disabled ? "true" : "false"}
                 onclick={
                   course.title === "Free Math PSLE 10 Years Series"
                     ? "openPSLESeriesPopup()"
                     : ""
                 }
-                class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs mt-auto ${
-                  course.disabled
-                    ? "opacity-60 cursor-not-allowed pointer-events-none"
-                    : ""
-                }`}>
+                class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs mt-auto`}>
                 {course.buttonText}
               </button>
             )}
