@@ -9,17 +9,16 @@ const courses = [
     link: null,
   },
   {
-    title: "Free Math P6 Prelims Exam Paper",
-    claimedText: "Coming soon",
-    buttonText: "Coming Soon",
+    title: "1 Month Trial 1 on 1 Online Lessons",
+    claimedText: "Money Back Guarantee",
+    buttonText: "View Pricing",
     buttonColor: "bg-primary hover:bg-blue-800",
-    image: "/items/online-education-2.svg",
-    link: null,
-    disabled: true,
+    image: "/items/online-education.svg",
+    link: "/pricing",
   },
   {
     title: "Free Past Year Math Exam Papers",
-    claimedText: "3 parents have claimed it",
+    claimedText: "20 parents have seen it",
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/value-of-knowledge.svg",
@@ -30,7 +29,7 @@ const courses = [
 
 <div class="py-8 sm:py-16 bg-background">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 lg:gap-12">
       {
         courses.map((course) => (
           <div class="flex flex-col items-center text-center p-3 sm:p-0 h-full">
