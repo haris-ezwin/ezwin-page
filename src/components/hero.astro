@@ -34,8 +34,8 @@ const heroMathChips = [
 <main class="relative bg-background pt-12 pb-0 overflow-hidden">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <div
-      class="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8 lg:gap-12 items-start">
-      <div class="text-left lg:col-span-2">
+      class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 lg:gap-12 items-start">
+      <div class="text-left">
         <div class="flex items-center gap-2 mb-4">
           {
             heroMathChips.map((chip) => (
@@ -51,14 +51,19 @@ const heroMathChips = [
           class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 uppercase">
           Singapore Online Primary 5 and 6 PSLE Math 1 on 1 Tuition
         </h1>
+        <div class="mb-4">
+          <span
+            class="inline-flex items-center rounded-full bg-amber-100 text-amber-900 text-base md:text-lg font-semibold px-4 py-1.5">
+            No improvements in first month, money back guarantee
+          </span>
+        </div>
         <p class="text-lg md:text-xl text-gray-700 mb-8">
-          If you don't see improvement in the first month, we will refund you.
           We help your child understand hard math topics like fractions and math
           problem sums, using personalised learning.
         </p>
       </div>
       <div
-        class="w-full lg:col-span-3"
+        class="w-full"
         id="hero-testimonials"
         data-hero-testimonials={encodeURIComponent(
           JSON.stringify(heroTestimonials),
