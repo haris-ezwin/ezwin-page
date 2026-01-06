@@ -6,6 +6,11 @@ const footerLinks = [
     onclick: "openPSLESeriesPopup()",
   },
   {
+    title: "1 Month Trial",
+    href: "#one-month-trial",
+    onclick: "openTuitionClassesPopup()",
+  },
+  {
     title: "Free Exam Papers",
     href: "/free-exam-papers",
   },
@@ -47,11 +52,11 @@ const supportLinks = [
           every parent who wants their child to thrive.
         </p>
         <div class="flex flex-wrap gap-3">
-          <a
-            href="/pricing"
+          <button
+            onclick="openTuitionClassesPopup()"
             class="bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-full px-6 py-2 transition-colors">
-            View Pricing
-          </a>
+            Start 1 Month Trial
+          </button>
           <button
             onclick="openPSLESeriesPopup()"
             class="border border-white/30 hover:border-white text-white text-sm font-semibold rounded-full px-6 py-2 transition-colors">
