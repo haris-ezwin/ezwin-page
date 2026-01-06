@@ -4,7 +4,6 @@ import Container from "@components/container.astro";
 
 const SCHEDULE_API_URL =
   "https://api.airtable.com/v0/app7aRJZSETQqVXx7/Timing?&view=Grid%20view";
-const DEFAULT_GRADES = ["P4", "P5", "P6"];
 const DAY_ORDER = [
   "Monday",
   "Tuesday",
@@ -28,99 +27,10 @@ type AirtableRecord = {
   fields?: AirtableFields;
 };
 
-const getToday = () => {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-};
-
-const parseISODate = (value: string) => {
-  const [year, month, day] = value.split("-").map(Number);
-  return new Date(year, month - 1, day);
-};
-
-const rawTerms = [
-  {
-    title: "2025 Term 4",
-    start: "2025-09-07",
-    end: "2025-12-07",
-    startLabel: "Sunday, 7 September 2025",
-    endLabel: "Sunday, 7 December 2025",
-    weeks: 13,
-  },
-  {
-    title: "2026 Term 1",
-    start: "2025-12-08",
-    end: "2026-03-08",
-    startLabel: "Monday, 8 December 2025",
-    endLabel: "Sunday, 8 March 2026",
-    weeks: 13,
-  },
-  {
-    title: "2026 Term 2",
-    start: "2026-03-09",
-    end: "2026-06-14",
-    startLabel: "Monday, 9 March 2026",
-    endLabel: "Sunday, 14 June 2026",
-    weeks: 14,
-  },
-  {
-    title: "2026 Term 3",
-    start: "2026-06-15",
-    end: "2026-09-13",
-    startLabel: "Monday, 15 June 2026",
-    endLabel: "Sunday, 13 September 2026",
-    weeks: 13,
-  },
-  {
-    title: "2026 Term 4",
-    start: "2026-09-14",
-    end: "2026-12-13",
-    startLabel: "Monday, 14 September 2026",
-    endLabel: "Sunday, 13 December 2026",
-    weeks: 13,
-  },
-];
-
-const today = getToday();
-
-const terms = rawTerms.map((term) => {
-  const startDate = parseISODate(term.start);
-  const endDate = parseISODate(term.end);
-  const isCurrent = today >= startDate && today <= endDate;
-  return { ...term, startDate, endDate, isCurrent };
-});
-
-const visibleTerms = terms.filter((term) => term.endDate >= today);
-
 const airtableToken = import.meta.env.AIRTABLE_SCHEDULE_TOKEN;
 
-const hasAllLevels = (value: string | undefined) => {
-  if (!value) return false;
-  return value.toLowerCase().includes("all");
-};
-
-const extractLevels = (value: string | undefined) => {
-  if (!value) return [];
-  const matches = value.match(/\d+/g) ?? [];
-  return matches.map((match) => `P${match}`);
-};
-
-const resolveLevels = (level?: string, description?: string) => {
-  if (hasAllLevels(level) || hasAllLevels(description)) {
-    return DEFAULT_GRADES.slice();
-  }
-
-  const parsedLevels = [
-    ...extractLevels(level),
-    ...extractLevels(description),
-  ];
-
-  if (!parsedLevels.length) {
-    return DEFAULT_GRADES.slice();
-  }
-
-  return Array.from(new Set(parsedLevels));
-};
+const hasAllLevels = (value?: string) =>
+  Boolean(value && value.toLowerCase().includes("all"));
 
 const normalizeDay = (day?: string) => {
   if (!day) return "Unscheduled";
@@ -157,24 +67,24 @@ const scheduleSlots = airtableRecords
   .map((record) => {
     const fields = record.fields ?? {};
     const day = normalizeDay(fields.Day);
-    const levels = resolveLevels(fields.Level, fields.Description);
+    const isAllLevel = hasAllLevels(fields.Level);
     const time =
       fields.Timing ||
       fields.Name ||
       fields.Description ||
       "Time to be confirmed";
 
-    return { day, levels, time };
+    return { day, time, isAllLevel };
   })
-  .filter((slot) => slot.day && slot.time && slot.levels.length);
+  .filter((slot) => slot.day && slot.time && slot.isAllLevel);
 
 const scheduleDays = Array.from(
   scheduleSlots.reduce((map, slot) => {
     const existing = map.get(slot.day) ?? [];
-    existing.push({ time: slot.time, levels: slot.levels });
+    existing.push({ time: slot.time });
     map.set(slot.day, existing);
     return map;
-  }, new Map<string, { time: string; levels: string[] }[]>()),
+  }, new Map<string, { time: string }[]>()),
 ).map(([title, slots]) => ({ title, slots }));
 
 ["Monday", "Tuesday", "Wednesday"].forEach((day) => {
@@ -192,19 +102,6 @@ const orderIndex = (day: string) => {
 };
 
 scheduleDays.sort((a, b) => orderIndex(a.title) - orderIndex(b.title));
-
-const gradeFilters = Array.from(
-  scheduleSlots.reduce((set, slot) => {
-    slot.levels.forEach((level) => set.add(level));
-    return set;
-  }, new Set<string>(DEFAULT_GRADES)),
-).sort((a, b) => {
-  const getNumber = (value: string) => {
-    const match = value.match(/\d+/);
-    return match ? Number(match[0]) : Number.MAX_SAFE_INTEGER;
-  };
-  return getNumber(a) - getNumber(b);
-});
 ---
 
 <Layout title="Schedule">
@@ -220,22 +117,6 @@ const gradeFilters = Array.from(
           2026
         </p>
 
-        {gradeFilters.length > 0 && (
-          <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
-            {
-              gradeFilters.map((grade) => (
-                <button
-                  type="button"
-                  class="px-5 py-2 rounded-full border border-gray-300 text-sm font-semibold text-gray-700 transition-colors duration-200 hover:border-primary hover:text-primary"
-                  data-grade-filter
-                  data-level={grade}>
-                  Primary {grade.replace("P", "")}
-                </button>
-              ))
-            }
-          </div>
-        )}
-
         <!-- Timetable Cards -->
         {
           scheduleDays.length === 0 ? (
@@ -248,8 +129,7 @@ const gradeFilters = Array.from(
                 <div
                   class={`bg-white rounded-lg shadow-md p-6 border-t-4 ${
                     day.slots?.length ? "border-primary" : "border-gray-300"
-                  }`}
-                  data-day-card>
+                  }`}>
                   <h3 class="text-2xl font-bold text-gray-900 mb-4">
                     {day.title}
                   </h3>
@@ -259,207 +139,21 @@ const gradeFilters = Array.from(
                       <p>No available slots.</p>
                     </div>
                   ) : (
-                    <>
-                      <div class="space-y-4" data-slot-container>
-                        {day.slots.map((slot) => (
-                          <div
-                            class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary"
-                            data-slot-levels={slot.levels.join(",")}>
-                            <p class="text-primary font-semibold">
-                              {slot.time}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                      <p
-                        class="mt-4 text-sm text-gray-500 hidden"
-                        data-no-slots-message>
-                        No available sessions for this level.
-                      </p>
-                    </>
+                    <div class="space-y-4">
+                      {day.slots.map((slot) => (
+                        <div class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
+                          <p class="text-primary font-semibold">
+                            {slot.time}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               ))}
             </div>
           )
         }
-
-        <div
-          id="schedule-config"
-          data-grade-filters={gradeFilters.join(",")}
-          class="hidden"></div>
-
-        <script type="module">
-          const initScheduleFilters = () => {
-            const configEl = document.getElementById("schedule-config");
-            const gradeFilters =
-              (configEl?.dataset.gradeFilters || "")
-                .split(",")
-                .map((value) => value.trim())
-                .filter(Boolean) ?? [];
-            const buttons = document.querySelectorAll("[data-grade-filter]");
-            const dayCards = document.querySelectorAll("[data-day-card]");
-
-            if (!buttons.length || !gradeFilters.length) {
-              return;
-            }
-
-            const normalizeLevel = (value) => {
-              if (!value) return null;
-              const normalized = value.trim().toUpperCase();
-              const withPrefix = normalized.startsWith("P")
-                ? normalized
-                : `P${normalized}`;
-              return gradeFilters.includes(withPrefix) ? withPrefix : null;
-            };
-
-            const getLevelFromQuery = () => {
-              const params = new URLSearchParams(window.location.search);
-              return (
-                normalizeLevel(params.get("level")) ||
-                normalizeLevel(params.get("p"))
-              );
-            };
-
-            const setQueryLevel = (level) => {
-              const params = new URLSearchParams(window.location.search);
-              if (level) {
-                params.set("level", level.toLowerCase());
-              } else {
-                params.delete("level");
-              }
-              const queryString = params.toString();
-              const newUrl = `${window.location.pathname}${
-                queryString ? `?${queryString}` : ""
-              }`;
-              window.history.replaceState({}, "", newUrl);
-            };
-
-            const defaultLevel = gradeFilters.includes("P6")
-              ? "P6"
-              : gradeFilters[0] ?? "";
-            let activeLevel = getLevelFromQuery() ?? defaultLevel;
-
-            const updateSlots = () => {
-              dayCards.forEach((card) => {
-                const slots = card.querySelectorAll("[data-slot-levels]");
-                const emptyMessage = card.querySelector(
-                  "[data-no-slots-message]",
-                );
-
-                if (!slots.length) {
-                  if (emptyMessage) {
-                    emptyMessage.classList.add("hidden");
-                  }
-                  return;
-                }
-
-                let hasVisibleSlot = false;
-
-                slots.forEach((slot) => {
-                  const levelData = slot.getAttribute("data-slot-levels") ?? "";
-                  const levels = levelData
-                    .split(",")
-                    .map((level) => level.trim())
-                    .filter(Boolean);
-                  const isMatch = !activeLevel || levels.includes(activeLevel);
-
-                  slot.classList.toggle("hidden", !isMatch);
-                  if (isMatch) {
-                    hasVisibleSlot = true;
-                  }
-                });
-
-                if (emptyMessage) {
-                  if (!activeLevel) {
-                    emptyMessage.classList.add("hidden");
-                  } else {
-                    const gradeLabel = activeLevel.replace("P", "");
-                    emptyMessage.textContent = hasVisibleSlot
-                      ? ""
-                      : `No available sessions for Primary ${gradeLabel}.`;
-                    emptyMessage.classList.toggle("hidden", hasVisibleSlot);
-                  }
-                }
-              });
-            };
-
-            const updateButtonStyles = () => {
-              buttons.forEach((button) => {
-                const level = button.getAttribute("data-level");
-                const isActive = level === activeLevel;
-
-                button.classList.toggle("bg-primary", isActive);
-                button.classList.toggle("text-white", isActive);
-                button.classList.toggle("border-primary", isActive);
-                button.classList.toggle("text-gray-700", !isActive);
-                button.classList.toggle("border-gray-300", !isActive);
-              });
-            };
-
-            buttons.forEach((button) => {
-              button.addEventListener("click", () => {
-                const level = button.getAttribute("data-level");
-                if (level === activeLevel) {
-                  return;
-                }
-                activeLevel = level;
-                setQueryLevel(activeLevel);
-                updateButtonStyles();
-                updateSlots();
-              });
-            });
-
-            updateButtonStyles();
-            updateSlots();
-          };
-
-          if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", initScheduleFilters);
-          } else {
-            initScheduleFilters();
-          }
-        </script>
-
-        <!-- Terms Section -->
-        <div class="mt-20">
-          <h2
-            class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
-            Terms
-          </h2>
-          <p class="text-center text-gray-600 mb-8">Changes may apply</p>
-
-          <div class="grid md:grid-cols-2 gap-6">
-            {
-              visibleTerms.length === 0 ? (
-                <div class="col-span-full text-center text-gray-600">
-                  No upcoming terms at the moment.
-                </div>
-              ) : (
-                visibleTerms.map((term) => (
-                  <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-primary">
-                    <div class="flex items-center justify-between mb-3">
-                      <h3 class="text-xl font-bold text-gray-900">
-                        {term.title}
-                      </h3>
-                      {term.isCurrent && (
-                        <span class="ml-3 inline-flex items-center px-3 py-1 rounded-full bg-primary text-white text-sm font-semibold">
-                          Currently
-                        </span>
-                      )}
-                    </div>
-                    <p class="text-gray-700 mb-2">
-                      <span class="font-semibold">{term.startLabel}</span> to
-                      <br />
-                      <span class="font-semibold">{term.endLabel}</span>
-                    </p>
-                    <p class="text-gray-500 text-sm">({term.weeks} weeks)</p>
-                  </div>
-                ))
-              )
-            }
-          </div>
-        </div>
 
         <!-- CTA -->
         <div class="mt-12 text-center">
