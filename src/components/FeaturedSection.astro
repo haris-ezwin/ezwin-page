@@ -2,7 +2,7 @@
 const courses = [
   {
     title: "Free Math PSLE 10 Years Series",
-    claimedText: "5 parents have claimed it",
+    claimedText: ["5 parents have claimed it"],
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/education-of-ideas.svg",
@@ -10,7 +10,7 @@ const courses = [
   },
   {
     title: "1 Month Trial 1 on 1 Online Lessons",
-    claimedText: "Money Back Guarantee",
+    claimedText: ["Money Back Guarantee", "10 Slots Left"],
     buttonText: "Start Trial",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/online-education.svg",
@@ -18,7 +18,7 @@ const courses = [
   },
   {
     title: "Free Past Year Math Exam Papers",
-    claimedText: "20 parents have seen it",
+    claimedText: ["20 parents have seen it"],
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/value-of-knowledge.svg",
@@ -37,9 +37,17 @@ const courses = [
             <h3 class="text-base sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-0 h-24 sm:h-28 flex items-center justify-center text-center">
               {course.title}
             </h3>
-            <p class="mt-2 mb-4 sm:mb-6 text-[11px] sm:text-sm font-medium text-primary uppercase tracking-wide h-4 sm:h-5 flex items-center justify-center">
-              {course.claimedText ?? ""}
-            </p>
+            {course.claimedText?.length ? (
+              <div class="mt-2 mb-4 sm:mb-6 flex flex-wrap items-center justify-center gap-2 min-h-[1.5rem]">
+                {course.claimedText.map((label) => (
+                  <span class="inline-flex items-center rounded-full border border-primary/50 px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-primary">
+                    {label}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <div class="mt-2 mb-4 sm:mb-6 min-h-[1.5rem]" />
+            )}
 
             {/* Image */}
             <div class="w-full max-w-[180px] sm:max-w-sm h-36 sm:h-44 lg:h-48 mb-0 sm:mb-4 lg:mb-8 rounded-lg overflow-hidden flex items-center justify-center bg-white">
