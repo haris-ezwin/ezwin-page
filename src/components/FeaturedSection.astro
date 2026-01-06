@@ -94,6 +94,51 @@ const courses = [
 
 <script type="module">
   const slotsEl = document.querySelector("[data-slots-left]");
+  const parseSlotsCount = (text) => {
+    if (!text) return null;
+    const match = text.match(/(\d+)/);
+    return match ? Number(match[1]) : null;
+  };
+  const setSlotsText = (count) => {
+    if (!slotsEl) return;
+    slotsEl.textContent = `${count} Slots Left`;
+  };
+  const animateSlotsCount = (from, to) => {
+    if (!slotsEl) return;
+    if (!Number.isFinite(from) || !Number.isFinite(to) || from === to) {
+      setSlotsText(to);
+      return;
+    }
+
+    const start = performance.now();
+    const duration = 900;
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+    const step = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const current = Math.round(from + (to - from) * easeOutCubic(progress));
+      setSlotsText(current);
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else if (slotsEl.animate) {
+        slotsEl.animate(
+          [
+            { transform: "scale(1)", boxShadow: "0 0 0 rgba(59,130,246,0)" },
+            {
+              transform: "scale(1.06)",
+              boxShadow: "0 0 0 4px rgba(59,130,246,0.2)",
+            },
+            { transform: "scale(1)", boxShadow: "0 0 0 rgba(59,130,246,0)" },
+          ],
+          { duration: 450, easing: "ease-out" }
+        );
+      }
+    };
+
+    requestAnimationFrame(step);
+  };
+  let currentCount = slotsEl ? parseSlotsCount(slotsEl.textContent) ?? 0 : 0;
 
   const updateSlotsLeft = async () => {
     if (!slotsEl) return;
@@ -107,7 +152,8 @@ const courses = [
         const slots = Array.isArray(day?.slots) ? day.slots : [];
         return total + slots.length;
       }, 0);
-      slotsEl.textContent = `${count} Slots Left`;
+      animateSlotsCount(currentCount, count);
+      currentCount = count;
     } catch (error) {
     }
   };
