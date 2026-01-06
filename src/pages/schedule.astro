@@ -160,11 +160,12 @@ scheduleDays.sort((a, b) => orderIndex(a.title) - orderIndex(b.title));
           <p class="text-lg text-gray-600 mb-6">
             Ready to join a class? Start your 1 month trial.
           </p>
-          <a
-            href="/enroll"
+          <button
+            type="button"
+            onclick="openTuitionClassesPopup()"
             class="bg-primary hover:bg-blue-800 text-white px-8 py-4 rounded-full text-lg font-semibold transition-colors duration-200 inline-block">
             1 Month Trial
-          </a>
+          </button>
         </div>
       </div>
     </div>
