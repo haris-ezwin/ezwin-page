@@ -2,106 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import Container from "@components/container.astro";
 
-const SCHEDULE_API_URL =
-  "https://api.airtable.com/v0/app7aRJZSETQqVXx7/Timing?&view=Grid%20view";
-const DAY_ORDER = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-
-type AirtableFields = {
-  Name?: string;
-  Level?: string;
-  Day?: string;
-  Timing?: string;
-  Description?: string;
-};
-
-type AirtableRecord = {
-  id: string;
-  fields?: AirtableFields;
-};
-
-const airtableToken = import.meta.env.AIRTABLE_SCHEDULE_TOKEN;
-
-const hasAllLevels = (value?: string) =>
-  Boolean(value && value.toLowerCase().includes("all"));
-
-const normalizeDay = (day?: string) => {
-  if (!day) return "Unscheduled";
-  const trimmed = day.trim();
-  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
-};
-
-let scheduleFetchError = "";
-let airtableRecords: AirtableRecord[] = [];
-
-if (!airtableToken) {
-  scheduleFetchError =
-    "Missing Airtable token. Set AIRTABLE_SCHEDULE_TOKEN in your environment.";
-} else {
-  try {
-    const response = await fetch(SCHEDULE_API_URL, {
-      headers: {
-        Authorization: `Bearer ${airtableToken}`,
-      },
-    });
-
-    if (!response.ok) {
-      scheduleFetchError = "Unable to load the latest schedule right now.";
-    } else {
-      const data = await response.json();
-      airtableRecords = data.records ?? [];
-    }
-  } catch (error) {
-    scheduleFetchError = "Unable to load the latest schedule right now.";
-  }
-}
-
-const scheduleSlots = airtableRecords
-  .map((record) => {
-    const fields = record.fields ?? {};
-    const day = normalizeDay(fields.Day);
-    const isAllLevel = hasAllLevels(fields.Level);
-    const time =
-      fields.Timing ||
-      fields.Name ||
-      fields.Description ||
-      "Time to be confirmed";
-
-    return { day, time, isAllLevel };
-  })
-  .filter((slot) => slot.day && slot.time && slot.isAllLevel);
-
-const scheduleDays = Array.from(
-  scheduleSlots.reduce((map, slot) => {
-    const existing = map.get(slot.day) ?? [];
-    existing.push({ time: slot.time });
-    map.set(slot.day, existing);
-    return map;
-  }, new Map<string, { time: string }[]>()),
-).map(([title, slots]) => ({ title, slots }));
-
-["Monday", "Tuesday", "Wednesday"].forEach((day) => {
-  const alreadyExists = scheduleDays.some(
-    (scheduleDay) => scheduleDay.title === day,
-  );
-  if (!alreadyExists) {
-    scheduleDays.push({ title: day, slots: [] });
-  }
-});
-
-const orderIndex = (day: string) => {
-  const index = DAY_ORDER.indexOf(day);
-  return index === -1 ? Number.MAX_SAFE_INTEGER : index;
-};
-
-scheduleDays.sort((a, b) => orderIndex(a.title) - orderIndex(b.title));
+const SKELETON_CARDS = Array.from({ length: 6 }, (_, index) => index);
 ---
 
 <Layout title="Schedule">
@@ -116,41 +17,170 @@ scheduleDays.sort((a, b) => orderIndex(a.title) - orderIndex(b.title));
           Choose a time slot that works best for your child for 2026
         </p>
 
-        <!-- Timetable Cards -->
-        {
-          scheduleDays.length === 0 ? (
-            <div class="text-center text-gray-600">
-              {scheduleFetchError || "No schedule is available right now."}
-            </div>
-          ) : (
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {scheduleDays.map((day) => (
-                <div
-                  class={`bg-white rounded-lg shadow-md p-6 border-t-4 ${
-                    day.slots?.length ? "border-primary" : "border-gray-300"
-                  }`}>
-                  <h3 class="text-2xl font-bold text-gray-900 mb-4">
-                    {day.title}
-                  </h3>
+        <div
+          class="text-sm text-gray-500 text-center mb-6"
+          data-schedule-loading
+          role="status"
+          aria-live="polite">
+          Loading the latest schedule...
+        </div>
+        <div
+          class="text-sm text-rose-500 text-center mb-6 hidden"
+          data-schedule-error
+          aria-live="polite"></div>
 
-                  {!day.slots?.length ? (
-                    <div class="text-gray-500 italic space-y-2">
-                      <p>No available slots.</p>
-                    </div>
-                  ) : (
-                    <div class="space-y-4">
-                      {day.slots.map((slot) => (
-                        <div class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                          <p class="text-primary font-semibold">{slot.time}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+        <!-- Timetable Cards -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" data-schedule-grid>
+          {
+            SKELETON_CARDS.map((card) => (
+              <div
+                class="bg-white rounded-lg shadow-md p-6 border-t-4 border-gray-200 animate-pulse"
+                aria-hidden="true"
+                data-schedule-skeleton
+                key={card}>
+                <div class="h-6 w-32 bg-gray-200 rounded mb-4"></div>
+                <div class="space-y-3">
+                  <div class="h-4 bg-gray-200 rounded"></div>
+                  <div class="h-4 bg-gray-200 rounded"></div>
+                  <div class="h-4 bg-gray-200 rounded"></div>
                 </div>
-              ))}
-            </div>
-          )
-        }
+              </div>
+            ))
+          }
+        </div>
+
+        <script type="module">
+          const DAY_ORDER = [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ];
+          const loadingEl = document.querySelector("[data-schedule-loading]");
+          const errorEl = document.querySelector("[data-schedule-error]");
+          const gridEl = document.querySelector("[data-schedule-grid]");
+
+          const normalizeDay = (day) => {
+            if (!day) return "Unscheduled";
+            const trimmed = day.trim();
+            return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+          };
+
+          const orderIndex = (day) => {
+            const index = DAY_ORDER.indexOf(day);
+            return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+          };
+
+          const normalizeSchedule = (days) => {
+            const normalized = (Array.isArray(days) ? days : []).map((day) => {
+              const title = normalizeDay(
+                typeof day?.title === "string" ? day.title : "Unscheduled",
+              );
+              const slots = Array.isArray(day?.slots) ? day.slots : [];
+              const cleanSlots = slots
+                .map((slot) => ({
+                  time: typeof slot?.time === "string" ? slot.time : "",
+                }))
+                .filter((slot) => slot.time);
+              return { title, slots: cleanSlots };
+            });
+
+            const existingTitles = new Set(
+              normalized.map((day) => day.title),
+            );
+            ["Monday", "Tuesday", "Wednesday"].forEach((day) => {
+              if (!existingTitles.has(day)) {
+                normalized.push({ title: day, slots: [] });
+              }
+            });
+
+            normalized.sort((a, b) => orderIndex(a.title) - orderIndex(b.title));
+            return normalized;
+          };
+
+          const buildDayCard = (day) => {
+            const card = document.createElement("div");
+            card.className = `bg-white rounded-lg shadow-md p-6 border-t-4 ${
+              day.slots?.length ? "border-primary" : "border-gray-300"
+            }`;
+
+            const title = document.createElement("h3");
+            title.className = "text-2xl font-bold text-gray-900 mb-4";
+            title.textContent = day.title;
+            card.appendChild(title);
+
+            if (!day.slots?.length) {
+              const emptyWrap = document.createElement("div");
+              emptyWrap.className = "text-gray-500 italic space-y-2";
+              const emptyText = document.createElement("p");
+              emptyText.textContent = "No available slots.";
+              emptyWrap.appendChild(emptyText);
+              card.appendChild(emptyWrap);
+              return card;
+            }
+
+            const slotsWrap = document.createElement("div");
+            slotsWrap.className = "space-y-4";
+            day.slots.forEach((slot) => {
+              const slotCard = document.createElement("div");
+              slotCard.className =
+                "bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary";
+              const timeEl = document.createElement("p");
+              timeEl.className = "text-primary font-semibold";
+              timeEl.textContent = slot.time;
+              slotCard.appendChild(timeEl);
+              slotsWrap.appendChild(slotCard);
+            });
+            card.appendChild(slotsWrap);
+            return card;
+          };
+
+          const renderSchedule = (days) => {
+            if (!gridEl) return;
+            gridEl.innerHTML = "";
+            days.forEach((day) => {
+              gridEl.appendChild(buildDayCard(day));
+            });
+          };
+
+          const loadSchedule = async () => {
+            if (!gridEl) return;
+            if (loadingEl) loadingEl.classList.remove("hidden");
+            if (errorEl) errorEl.classList.add("hidden");
+
+            try {
+              const response = await fetch("/api/schedule", {
+                cache: "no-store",
+              });
+              if (!response.ok) {
+                throw new Error("Schedule fetch failed");
+              }
+              const data = await response.json();
+              const normalized = normalizeSchedule(data?.days);
+              renderSchedule(normalized);
+            } catch (error) {
+              if (errorEl) {
+                errorEl.textContent =
+                  "Unable to load the latest schedule right now.";
+                errorEl.classList.remove("hidden");
+              }
+              if (gridEl) {
+                gridEl.innerHTML = "";
+              }
+            } finally {
+              if (loadingEl) loadingEl.classList.add("hidden");
+            }
+          };
+
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", loadSchedule);
+          } else {
+            loadSchedule();
+          }
+        </script>
 
         <!-- CTA -->
         <div class="mt-12 text-center">
