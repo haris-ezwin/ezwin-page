@@ -113,8 +113,7 @@ scheduleDays.sort((a, b) => orderIndex(a.title) - orderIndex(b.title));
           Class Schedule
         </h1>
         <p class="text-xl text-gray-600 mb-12 text-center">
-          Choose a time slot that works best for your child for the upcoming
-          2026
+          Choose a time slot that works best for your child for 2026
         </p>
 
         <!-- Timetable Cards -->
@@ -142,9 +141,7 @@ scheduleDays.sort((a, b) => orderIndex(a.title) - orderIndex(b.title));
                     <div class="space-y-4">
                       {day.slots.map((slot) => (
                         <div class="bg-blue-50 px-4 py-3 rounded-lg border-l-4 border-primary">
-                          <p class="text-primary font-semibold">
-                            {slot.time}
-                          </p>
+                          <p class="text-primary font-semibold">{slot.time}</p>
                         </div>
                       ))}
                     </div>
