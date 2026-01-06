@@ -1,9 +1,7 @@
 ---
 import Container from "@components/container.astro";
-import Link from "@components/ui/link.astro";
+import { Astronav, MenuIcon, MenuItems } from "astro-navbar";
 import Dropdown from "./dropdown.astro";
-import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
-import { getCurrentOffer } from "@utils/offer.js";
 
 const menuitems = [
   {
@@ -30,26 +28,6 @@ const menuitems = [
     path: "/blog",
   },
 ];
-
-const activeOffers = getCurrentOffer();
-
-const currentDate = new Date();
-const currentMonth = currentDate.getMonth() + 1; // Get current month (1-12)
-let monthsOffer = 0;
-
-if (currentMonth === 3) {
-  monthsOffer = 3;
-} else if (currentMonth === 4) {
-  monthsOffer = 2;
-} else if (currentMonth === 5) {
-  monthsOffer = 1;
-}
-
-// Calculate days remaining until March 15, 2025
-const endDate = new Date(2025, 2, 15); // Month is 0-indexed, so 2 = March
-const timeDiff = endDate.getTime() - currentDate.getTime();
-const daysRemaining = Math.ceil(timeDiff / (1000 * 3600 * 24));
-const showOffer = daysRemaining > 0;
 ---
 
 <div id="site-header" class="sticky top-0 z-40 bg-background">
@@ -62,7 +40,8 @@ const showOffer = daysRemaining > 0;
               src="/header_bg_invis.png"
               alt="EzWin Academy"
               class="h-12 w-auto object-contain"
-              loading="lazy" />
+              loading="lazy"
+            />
           </a>
           <div class="block lg:hidden">
             <MenuIcon class="w-4 h-4 text-gray-800" />
