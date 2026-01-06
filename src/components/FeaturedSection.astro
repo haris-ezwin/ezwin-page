@@ -10,7 +10,7 @@ const courses = [
   },
   {
     title: "1 Month Trial 1 on 1 Online Lessons",
-    claimedText: ["Money Back Guarantee", "10 Slots Left"],
+    claimedText: ["Money Back Guarantee", "12 Slots Left"],
     buttonText: "Start Trial",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/online-education.svg",
@@ -39,11 +39,18 @@ const courses = [
             </h3>
             {course.claimedText?.length ? (
               <div class="mt-2 mb-4 sm:mb-6 flex flex-wrap items-center justify-center gap-2 min-h-[1.5rem]">
-                {course.claimedText.map((label) => (
-                  <span class="inline-flex items-center rounded-full border border-primary/50 px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-primary">
-                    {label}
-                  </span>
-                ))}
+                {course.claimedText.map((label) => {
+                  const isSlotsLabel =
+                    course.title === "1 Month Trial 1 on 1 Online Lessons" &&
+                    label.toLowerCase().includes("slots left");
+                  return (
+                    <span
+                      class="inline-flex items-center rounded-full border border-primary/50 px-3 py-1 text-[11px] sm:text-xs font-semibold uppercase tracking-wide text-primary"
+                      data-slots-left={isSlotsLabel ? "true" : undefined}>
+                      {label}
+                    </span>
+                  );
+                })}
               </div>
             ) : (
               <div class="mt-2 mb-4 sm:mb-6 min-h-[1.5rem]" />
@@ -84,3 +91,30 @@ const courses = [
     </div>
   </div>
 </div>
+
+<script type="module">
+  const slotsEl = document.querySelector("[data-slots-left]");
+
+  const updateSlotsLeft = async () => {
+    if (!slotsEl) return;
+
+    try {
+      const response = await fetch("/api/schedule", { cache: "no-store" });
+      if (!response.ok) return;
+      const data = await response.json();
+      const days = Array.isArray(data?.days) ? data.days : [];
+      const count = days.reduce((total, day) => {
+        const slots = Array.isArray(day?.slots) ? day.slots : [];
+        return total + slots.length;
+      }, 0);
+      slotsEl.textContent = `${count} Slots Left`;
+    } catch (error) {
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", updateSlotsLeft);
+  } else {
+    updateSlotsLeft();
+  }
+</script>
