@@ -9,7 +9,7 @@ const courses = [
     link: null,
   },
   {
-    title: "Free 1st Online 1 on 1 Session",
+    title: "Free 1 on 1 Session Trial",
     claimedText: ["Money Back Guarantee", "12 Slots Left"],
     buttonText: "Start Trial",
     buttonColor: "bg-primary hover:bg-blue-800",
@@ -35,7 +35,7 @@ const courses = [
 ];
 ---
 
-<div class="py-8 sm:py-16 bg-background">
+<div id="free-1-on-1-session-trial" class="py-8 sm:py-16 bg-background">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
       {
@@ -49,7 +49,7 @@ const courses = [
               <div class="mt-2 mb-4 sm:mb-6 flex flex-wrap items-center justify-center gap-2 min-h-[1.5rem]">
                 {course.claimedText.map((label) => {
                   const isSlotsLabel =
-                    course.title === "Free 1st Online 1 on 1 Session" &&
+                    course.title === "Free 1 on 1 Session Trial" &&
                     label.toLowerCase().includes("slots left");
                   return (
                     <span
@@ -85,7 +85,7 @@ const courses = [
                 onclick={
                   course.title === "Free Math PSLE 10 Years Series"
                     ? "openPSLESeriesPopup()"
-                    : course.title === "Free 1st Online 1 on 1 Session"
+                    : course.title === "Free 1 on 1 Session Trial"
                       ? "openTuitionClassesPopup()"
                       : ""
                 }
