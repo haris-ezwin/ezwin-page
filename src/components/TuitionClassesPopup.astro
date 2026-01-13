@@ -45,9 +45,7 @@
         </svg>
       </div>
       <h3 class="text-2xl font-bold text-gray-900 mb-3">Thank You!</h3>
-      <p class="text-gray-600 text-base">
-        Redirecting to booking page...
-      </p>
+      <p class="text-gray-600 text-base">Redirecting to booking page...</p>
     </div>
 
     <!-- Form -->
@@ -149,7 +147,7 @@
       const formData = new FormData(this);
       const data = {
         ...Object.fromEntries(formData),
-        tag: "tag-session",
+        tag: "trial-session",
       };
       const queryParams = new URLSearchParams({
         name: String(formData.get("parentFirstName") || ""),
