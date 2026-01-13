@@ -12,14 +12,20 @@ const heroTestimonials = [
   },
   {
     name: "Mdm Grace",
-    role: "Parent of Jing En, 2025",
+    role: "Parent, P5 2025",
     quote: "Jing En prefers you over another tutor we had.",
   },
   {
     name: "Mdm Venus",
-    role: "Parent, 2025",
+    role: "Parent, P6 2026",
     quote:
       "Ur explanation is very very clear - she (my kid) is super weak in fraction and now she can catch up a bit...",
+  },
+  {
+    name: "Claire",
+    role: "Parent, P6 2026",
+    quote:
+      "Hi Haris, the session today went well. It was structured, clear. The LMS application logic is good too.",
   },
 ];
 
@@ -29,6 +35,17 @@ const heroMathChips = [
   { symbol: "x", color: "#9B72FF" }, // cap purple 9B72FF
   { symbol: "÷", color: "#48E1C6" }, // mint book
 ];
+
+const parentIcon = "/items/parent.svg";
+const studentIcon = "/items/open-arm.svg";
+
+const isParentRole = (role) =>
+  String(role || "")
+    .toLowerCase()
+    .includes("parent");
+const getRoleIcon = (role) => (isParentRole(role) ? parentIcon : studentIcon);
+const getRoleIconAlt = (role) =>
+  isParentRole(role) ? "Parent icon" : "Student icon";
 ---
 
 <main class="relative bg-background pt-12 pb-0 overflow-hidden">
@@ -64,8 +81,9 @@ const heroMathChips = [
               stroke-linecap="round"
               stroke-linejoin="round"
               aria-hidden="true">
-              <path d="M12 2l7 4v6c0 5-3.5 9.5-7 10-3.5-.5-7-5-7-10V6l7-4z" />
-              <path d="M9 12l2 2 4-4" />
+              <path d="M12 2l7 4v6c0 5-3.5 9.5-7 10-3.5-.5-7-5-7-10V6l7-4z"
+              ></path>
+              <path d="M9 12l2 2 4-4"></path>
             </svg>
           </span>
         </div>
@@ -102,6 +120,12 @@ const heroMathChips = [
               "{heroTestimonials[0].quote}"
             </p>
             <p class="text-xs font-semibold text-gray-900">
+              <img
+                id="hero-testimonial-rotator-icon"
+                class="inline-block w-4 h-4 mr-2 align-middle"
+                src={getRoleIcon(heroTestimonials[0].role)}
+                alt={getRoleIconAlt(heroTestimonials[0].role)}
+              />
               <span id="hero-testimonial-rotator-name"
                 >{heroTestimonials[0].name}</span
               >
@@ -115,10 +139,10 @@ const heroMathChips = [
             </p>
           </div>
         </div>
-        <div class="hidden lg:grid grid-cols-2 gap-3">
+        <div class="hidden lg:block lg:columns-2 [column-gap:0.75rem]">
           {
             heroTestimonials.map((testimonial) => (
-              <div class="bg-white border border-gray-200 shadow-sm rounded-2xl p-5 lg:p-6">
+              <div class="bg-white border border-gray-200 shadow-sm rounded-2xl p-5 lg:p-6 break-inside-avoid mb-3">
                 <div class="flex gap-1 text-yellow-400 mb-2">
                   {Array.from({ length: 5 }).map(() => (
                     <svg
@@ -133,9 +157,13 @@ const heroMathChips = [
                   "{testimonial.quote}"
                 </p>
                 <p class="text-xs md:text-sm font-semibold text-gray-900">
+                  <img
+                    class="inline-block w-4 h-4 mr-2 align-middle"
+                    src={getRoleIcon(testimonial.role)}
+                    alt={getRoleIconAlt(testimonial.role)}
+                  />
                   {testimonial.name}
                   <span class="text-gray-500 font-normal">
-                    {" "}
                     ({testimonial.role})
                   </span>
                 </p>
@@ -158,15 +186,29 @@ const heroMathChips = [
   const heroContentEl = document.getElementById(
     "hero-testimonial-rotator-content",
   );
+  const parentIcon = "/items/parent.svg";
+  const studentIcon = "/items/open-arm.svg";
+
+  function isParentRole(role) {
+    return String(role || "")
+      .toLowerCase()
+      .includes("parent");
+  }
 
   function applyHeroTestimonial(testimonial) {
     const textEl = document.getElementById("hero-testimonial-rotator-text");
     const nameEl = document.getElementById("hero-testimonial-rotator-name");
     const roleEl = document.getElementById("hero-testimonial-rotator-role");
+    const iconEl = document.getElementById("hero-testimonial-rotator-icon");
     if (!textEl || !nameEl || !roleEl || !testimonial) return;
+    const parentRole = isParentRole(testimonial.role);
     textEl.textContent = `"${testimonial.quote}"`;
     nameEl.textContent = testimonial.name;
     roleEl.textContent = testimonial.role;
+    if (iconEl) {
+      iconEl.src = parentRole ? parentIcon : studentIcon;
+      iconEl.alt = parentRole ? "Parent icon" : "Student icon";
+    }
   }
 
   function renderHeroTestimonial(index, animate = true) {
