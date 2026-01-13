@@ -41,13 +41,12 @@
             stroke-linecap="round"
             stroke-linejoin="round"
             stroke-width="2"
-            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
       </div>
       <h3 class="text-2xl font-bold text-gray-900 mb-3">Thank You!</h3>
       <p class="text-gray-600 text-base">
-        We will contact you shortly to arrange your free 1 on 1 session trial.
+        Redirecting to booking page...
       </p>
     </div>
 
@@ -152,6 +151,12 @@
         ...Object.fromEntries(formData),
         tag: "1-month-trial",
       };
+      const queryParams = new URLSearchParams({
+        name: String(formData.get("parentFirstName") || ""),
+        email: String(formData.get("parentEmail") || ""),
+        attendeePhoneNumber: `65${String(formData.get("parentPhone") || "")}`,
+      });
+      const redirectUrl = `https://cal.com/haris-samingan-m0xvf8/trial?${queryParams.toString()}`;
 
       try {
         // Determine webhook URL based on environment
@@ -175,7 +180,9 @@
         // With no-cors mode, we can't read the response, but the request is sent
         // Hide form and header, show success message
         const formHeader = document.getElementById("tuition-form-header");
-        const successMessage = document.getElementById("tuition-success-message");
+        const successMessage = document.getElementById(
+          "tuition-success-message",
+        );
         const form = document.getElementById("tuition-classes-form");
 
         if (formHeader) formHeader.classList.add("hidden");
@@ -184,6 +191,9 @@
 
         // Reset form
         this.reset();
+
+        // Redirect to booking page with form data
+        window.location.href = redirectUrl;
 
         // Auto-close popup after 3 seconds
         setTimeout(() => {
