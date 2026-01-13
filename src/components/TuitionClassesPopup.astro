@@ -149,7 +149,7 @@
       const formData = new FormData(this);
       const data = {
         ...Object.fromEntries(formData),
-        tag: "1-month-trial",
+        tag: "tag-session",
       };
       const queryParams = new URLSearchParams({
         name: String(formData.get("parentFirstName") || ""),
