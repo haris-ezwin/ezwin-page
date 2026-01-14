@@ -2,7 +2,7 @@
 const courses = [
   {
     title: "Free Math PSLE 10 Years Series",
-    claimedText: ["5 parents have claimed it"],
+    claimedText: ["10 parents have claimed it"],
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/education-of-ideas.svg",
@@ -10,7 +10,7 @@ const courses = [
   },
   {
     title: "Free 1 on 1 Session Trial",
-    claimedText: ["Money Back Guarantee", "12 Slots Left"],
+    claimedText: ["Money Back Guarantee", "21 Slots Left"],
     buttonText: "Start Trial",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/online-education.svg",
@@ -30,7 +30,8 @@ const courses = [
     buttonText: "Get Analysis",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/online-education-2.svg",
-    link: "https://forms.gle/Fb8Q5MRMKspeNm1D6",
+    link: "https://ez1.sg/analysis",
+    newTab: true,
   },
 ];
 ---
@@ -77,6 +78,8 @@ const courses = [
             {course.link ? (
               <a
                 href={course.link}
+                target={course.newTab ? "_blank" : undefined}
+                rel={course.newTab ? "noreferrer" : undefined}
                 class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs text-center block mt-auto`}>
                 {course.buttonText}
               </a>
@@ -139,14 +142,14 @@ const courses = [
             },
             { transform: "scale(1)", boxShadow: "0 0 0 rgba(59,130,246,0)" },
           ],
-          { duration: 450, easing: "ease-out" }
+          { duration: 450, easing: "ease-out" },
         );
       }
     };
 
     requestAnimationFrame(step);
   };
-  let currentCount = slotsEl ? parseSlotsCount(slotsEl.textContent) ?? 0 : 0;
+  let currentCount = slotsEl ? (parseSlotsCount(slotsEl.textContent) ?? 0) : 0;
 
   const updateSlotsLeft = async () => {
     if (!slotsEl) return;
@@ -162,8 +165,7 @@ const courses = [
       }, 0);
       animateSlotsCount(currentCount, count);
       currentCount = count;
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   if (document.readyState === "loading") {
