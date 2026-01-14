@@ -17,7 +17,8 @@ const menuitems = [
   { title: "Free Exam Papers", path: "/free-exam-papers" },
   {
     title: "Free Exam Paper Analysis",
-    path: "https://forms.gle/Fb8Q5MRMKspeNm1D6",
+    path: "https://ez1.sg/analysis",
+    newTab: true,
   },
   {
     title: "Schedule",
@@ -69,6 +70,8 @@ const menuitems = [
                       <a
                         href={item.path}
                         onclick={item.onclick}
+                        target={item.newTab ? "_blank" : undefined}
+                        rel={item.newTab ? "noreferrer" : undefined}
                         class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-gray-900">
                         <span> {item.title}</span>
                       </a>
