@@ -2,15 +2,15 @@
 const courses = [
   {
     title: "Free Math PSLE 10 Years Series",
-    claimedText: ["5 parents have claimed it"],
+    claimedText: ["10 parents have claimed it"],
     buttonText: "Get It Now",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/education-of-ideas.svg",
     link: null,
   },
   {
-    title: "1 Month Trial 1 on 1 Online Lessons",
-    claimedText: ["Money Back Guarantee", "12 Slots Left"],
+    title: "Free 1 on 1 Session Trial",
+    claimedText: ["Money Back Guarantee", "21 Slots Left"],
     buttonText: "Start Trial",
     buttonColor: "bg-primary hover:bg-blue-800",
     image: "/items/online-education.svg",
@@ -24,12 +24,21 @@ const courses = [
     image: "/items/value-of-knowledge.svg",
     link: "/free-exam-papers",
   },
+  {
+    title: "Free Exam Paper Analysis",
+    claimedText: ["Actionable feedback included"],
+    buttonText: "Get Analysis",
+    buttonColor: "bg-primary hover:bg-blue-800",
+    image: "/items/online-education-2.svg",
+    link: "https://ez1.sg/analysis",
+    newTab: true,
+  },
 ];
 ---
 
-<div class="py-8 sm:py-16 bg-background">
+<div id="free-1-on-1-session-trial" class="py-8 sm:py-16 bg-background">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8 lg:gap-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 lg:gap-12">
       {
         courses.map((course) => (
           <div class="flex flex-col items-center text-center p-3 sm:p-0 h-full">
@@ -41,7 +50,7 @@ const courses = [
               <div class="mt-2 mb-4 sm:mb-6 flex flex-wrap items-center justify-center gap-2 min-h-[1.5rem]">
                 {course.claimedText.map((label) => {
                   const isSlotsLabel =
-                    course.title === "1 Month Trial 1 on 1 Online Lessons" &&
+                    course.title === "Free 1 on 1 Session Trial" &&
                     label.toLowerCase().includes("slots left");
                   return (
                     <span
@@ -69,6 +78,8 @@ const courses = [
             {course.link ? (
               <a
                 href={course.link}
+                target={course.newTab ? "_blank" : undefined}
+                rel={course.newTab ? "noreferrer" : undefined}
                 class={`${course.buttonColor} text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-colors duration-200 w-full max-w-[180px] sm:max-w-xs text-center block mt-auto`}>
                 {course.buttonText}
               </a>
@@ -77,7 +88,7 @@ const courses = [
                 onclick={
                   course.title === "Free Math PSLE 10 Years Series"
                     ? "openPSLESeriesPopup()"
-                    : course.title === "1 Month Trial 1 on 1 Online Lessons"
+                    : course.title === "Free 1 on 1 Session Trial"
                       ? "openTuitionClassesPopup()"
                       : ""
                 }
@@ -131,14 +142,14 @@ const courses = [
             },
             { transform: "scale(1)", boxShadow: "0 0 0 rgba(59,130,246,0)" },
           ],
-          { duration: 450, easing: "ease-out" }
+          { duration: 450, easing: "ease-out" },
         );
       }
     };
 
     requestAnimationFrame(step);
   };
-  let currentCount = slotsEl ? parseSlotsCount(slotsEl.textContent) ?? 0 : 0;
+  let currentCount = slotsEl ? (parseSlotsCount(slotsEl.textContent) ?? 0) : 0;
 
   const updateSlotsLeft = async () => {
     if (!slotsEl) return;
@@ -154,8 +165,7 @@ const courses = [
       }, 0);
       animateSlotsCount(currentCount, count);
       currentCount = count;
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   if (document.readyState === "loading") {
