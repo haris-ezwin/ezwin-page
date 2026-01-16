@@ -1,7 +1,5 @@
 import type { APIRoute } from "astro";
 
-export const prerender = false;
-
 const SCHEDULE_API_URL =
   "https://api.airtable.com/v0/app7aRJZSETQqVXx7/Timing?&view=Grid%20view";
 const DAY_ORDER = [
